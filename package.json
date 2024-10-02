@@ -1,0 +1,52 @@
+{
+  "name": "threefy",
+  "version": "1.0.0",
+  "description": "A javascript 3D library that integrates React and three.js",
+  "type": "module",
+  "files": [
+    "dist",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
+  "main": "./dist/threefy.umd.cjs",
+  "module": "./dist/threefy.js",
+  "exports": {
+    ".": {
+      "import": "./dist/threefy.js",
+      "require": "./dist/threefy.umd.cjs"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nova-graphix/threefy.git"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "3d",
+    "react",
+    "three.js",
+    "webgl",
+    "canvas",
+    "html5"
+  ],
+  "author": "nova-graphix",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nova-graphix/threefy/issues"
+  },
+  "homepage": "https://github.com/nova-graphix/threefy",
+  "devDependencies": {
+    "three": "^0.169.0",
+    "vite": "^5.4.1"
+  },
+  "peerDependencies": {
+    "react": ">=18.0",
+    "three": ">=0.167"
+  }
+}
