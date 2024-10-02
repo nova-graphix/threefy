@@ -30,7 +30,7 @@ Now you’re ready to start using threefy to create 3D graphic content!
 
 Here’s a quick example of how to get started with threefy. The first example shows creating a 3D element, and the second example shows updating the geometry and material of a box mesh using React hooks. If no camera and scene are defined, as in the second example, threefy will insert a default camera and scene for your convenience. Note that all 3D elements in threefy must exist inside a **ThreeCanvas**.
 
-#### &#9679; Example: Creating 3D elements
+#### 1) Example: Creating 3D elements
 ```jsx
 import { createRoot } from 'react-dom/client'
 import * as Threefy from 'threefy'
@@ -49,7 +49,7 @@ createRoot(document.getElementById('root')).render(
     </Threefy.ThreeCanvas>
 )
 ```
-#### &#9679; Example: Updating a created 3D element
+#### 2) Example: Updating a created 3D element
 ```jsx
 import { useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
