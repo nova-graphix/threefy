@@ -9,14 +9,8 @@
     "package.json",
     "README.md"
   ],
-  "main": "./dist/threefy.umd.cjs",
+  "main": "./dist/threefy.js",
   "module": "./dist/threefy.js",
-  "exports": {
-    ".": {
-      "import": "./dist/threefy.js",
-      "require": "./dist/threefy.umd.cjs"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nova-graphix/threefy.git"
