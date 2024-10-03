@@ -1,6 +1,6 @@
 {
   "name": "threefy",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A javascript 3D library that integrates React and three.js",
   "type": "module",
   "files": [
