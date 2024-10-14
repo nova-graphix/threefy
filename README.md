@@ -98,13 +98,13 @@ createRoot(document.getElementById('root')).render(
 
 ## Documentation
 For more examples and detailed documentation, please refer to the [threefy documentation](https://nova-graphix.gitbook.io/threefy).
+
+## Contributing
+All contributions are welcome as well as donations! Please contact us at **info@nova-graphix.com** for any questions or suggestions.
 - Website: https://www.nova-graphix.com
 - LinkedIn: https://www.linkedin.com/company/novagraphix/
 - Facebook: https://www.facebook.com/NovaGraphixCo
 - YouTube: https://www.youtube.com/@3D-novagraphix
-
-## Contributing
-All contributions are welcome as well as donations! Please contact us at **info@nova-graphix.com** for any questions or suggestions.
 
 ## License
 This project is licensed under the MIT License.
