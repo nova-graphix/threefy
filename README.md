@@ -5,8 +5,8 @@
 Threefy
 </h1>
 
-![](https://img.shields.io/badge/minimized_size-142KB-blue)
-![](https://img.shields.io/badge/npm-v1.0.0-yellow)
+![](https://img.shields.io/badge/minzipped_size-43.7KB-blue)
+![](https://img.shields.io/badge/npm-v1.0.4-yellow)
 ![](https://img.shields.io/badge/react-18.2.0-red)
 ![](https://img.shields.io/badge/three.js-r169-green)
 ![](https://img.shields.io/badge/license-mit-white)
@@ -98,6 +98,10 @@ createRoot(document.getElementById('root')).render(
 
 ## Documentation
 For more examples and detailed documentation, please refer to the [threefy documentation](https://nova-graphix.gitbook.io/threefy).
+- Website: https://www.nova-graphix.com
+- LinkedIn: https://www.linkedin.com/company/novagraphix/
+- Facebook: https://www.facebook.com/NovaGraphixCo
+- YouTube: https://www.youtube.com/@3D-novagraphix
 
 ## Contributing
 All contributions are welcome as well as donations! Please contact us at **info@nova-graphix.com** for any questions or suggestions.
