@@ -5,10 +5,10 @@
 Threefy
 </h1>
 
-![](https://img.shields.io/badge/minzipped_size-43.7KB-blue)
-![](https://img.shields.io/badge/npm-v1.0.4-yellow)
+![](https://img.shields.io/badge/package_size-43.8KB-blue)
+![](https://img.shields.io/badge/npm-v1.0.5-yellow)
 ![](https://img.shields.io/badge/react-18.2.0-red)
-![](https://img.shields.io/badge/three.js-r169-green)
+![](https://img.shields.io/badge/three.js-r174-green)
 ![](https://img.shields.io/badge/license-mit-white)
 
 ## Overview
