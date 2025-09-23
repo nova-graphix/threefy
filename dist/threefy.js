@@ -2484,7 +2484,7 @@ const Or = (r) => {
 }, ls = (r, e) => {
   const t = new F();
   Or(r), t.saveFile(r, e);
-}, Rr = "https://unpkg.com/browse/three@0.174.0/examples/jsm/libs/basis/", He = "https://www.gstatic.com/draco/versioned/decoders/1.5.6/", _ = function() {
+}, Rr = "https://app.unpkg.com/three@0.180.0/files/examples/jsm/libs/basis/", He = "https://www.gstatic.com/draco/versioned/decoders/1.5.7/", _ = function() {
   const r = this;
   this.imageFiles = [], this.mtlFile = null, this.loadItemList = (u) => {
     Ke.getFilesFromItemList(u, (l, c) => {
