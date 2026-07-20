@@ -5,7 +5,7 @@
 Threefy
 </h1>
 
-![](https://img.shields.io/badge/package_size-47.8KB-blue)
+![](https://img.shields.io/badge/package_size-47.7KB-blue)
 ![](https://img.shields.io/badge/npm-v2.0.0-yellow)
 ![](https://img.shields.io/badge/renderer-WebGPU-purple)
 ![](https://img.shields.io/badge/react-19.2.7-red)
@@ -15,7 +15,7 @@ Threefy
 ## Overview
 **Threefy** is a lightweight JavaScript library that brings [**three.js**](https://threejs.org/) into [**React**](https://react.dev/) as first-class declarative components. Describe a scene the way you describe a UI — as a tree of elements with props — and threefy handles the imperative object graph, the render loop, and the disposal for you.
 
-The entire library ships as a single ES module — **144 kB, about 41 kB gzipped** — with no bundled dependencies: react and three.js stay external, so you keep full control over your own versions and never pay for a duplicate copy of three.js.
+The entire library ships as a single ES module with no bundled dependencies: react and three.js stay external, so you keep full control over your own versions and never pay for a duplicate copy of three.js.
 
 ## What's new in 2.0 — WebGPU
 
