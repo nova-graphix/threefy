@@ -5,7 +5,7 @@
 Threefy
 </h1>
 
-![](https://img.shields.io/badge/package_size-60.7KB-blue)
+![](https://img.shields.io/badge/package_size-60.9KB-blue)
 ![](https://img.shields.io/badge/npm-v2.1.0-yellow)
 ![](https://img.shields.io/badge/renderer-WebGPU-purple)
 ![](https://img.shields.io/badge/react-19.2.7-red)
@@ -220,11 +220,12 @@ Version 2.0 is a major release. If you are upgrading an existing 1.x project:
 - **The `.js` / `.json` model format is no longer read or written** (2.1). It was three.js's own object format; loading it never actually reached the scene, so nothing that worked before stops working. Use `.glb` for the same round trip — `useExporter( 'scene.glb', object )` and `useLoader( 'scene.glb' )`.
 
 ### Coming from 2.0
-Three changes can be noticed by existing code:
+Four changes can be noticed by existing code:
 
 - **`ThreeCanvas` renders an element.** The canvas used to be appended to `document.body`, outside your React tree; it now lives inside the element `ThreeCanvas` renders, so your own CSS finally applies to it. If your canvas was sized by the window and its container gives it no height, it keeps filling the window as before.
 - **Several `<ThreeCanvas>` tags now mean several canvases.** Until 2.0 the renderer was a module-wide singleton, so repeating the tag silently folded into one canvas. That was a side effect, not a feature. To assemble one scene from several pieces, use ordinary components and `<group>` — no extra `ThreeCanvas` needed. Nesting one inside another is almost certainly a mistake and is now reported in the console.
 - **A texture that fails to load is no longer cached.** The next request retries instead of returning the same empty texture forever, and `threefy.loadTexture( url, onLoad, onError )` reports the failure. An empty URL now means "no texture" and is not requested at all — convenient when the URLs come from a config object with unused slots.
+- **`<shaderMaterial>` and `<rawShaderMaterial>` are gone.** three's `ShaderMaterial` and `RawShaderMaterial` are GLSL-only, so the WebGPU renderer cannot draw them — 2.0 already documented them as unsupported, but the tags still built a material that never appeared. The names are still recognised: they report the removal in the console and render nothing, rather than vanishing silently. Port them to TSL node materials, for example `<meshStandardNodeMaterial colorNode={…} positionNode={…}/>`.
 
 ## Documentation
 For a full API reference and many more examples, see the [threefy documentation](https://nova-graphix.gitbook.io/threefy).
