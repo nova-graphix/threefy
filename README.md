@@ -5,7 +5,7 @@
 Threefy
 </h1>
 
-![](https://img.shields.io/badge/package_size-60.6KB-blue)
+![](https://img.shields.io/badge/package_size-60.7KB-blue)
 ![](https://img.shields.io/badge/npm-v2.1.0-yellow)
 ![](https://img.shields.io/badge/renderer-WebGPU-purple)
 ![](https://img.shields.io/badge/react-19.2.7-red)

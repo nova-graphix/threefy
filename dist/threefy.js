@@ -1536,8 +1536,6 @@ var L = {
 	standard: "MeshStandardMaterial",
 	toon: "MeshToonMaterial",
 	points: "PointsMaterial",
-	rawShader: "RawShaderMaterial",
-	shader: "ShaderMaterial",
 	shadow: "ShadowMaterial",
 	sprite: "SpriteMaterial",
 	node: "NodeMaterial",
@@ -1558,12 +1556,12 @@ var L = {
 	shadowNode: "ShadowNodeMaterial",
 	volumeNode: "VolumeNodeMaterial"
 }, qn = {
-	ShaderMaterial: "shaderMaterial",
-	RawShaderMaterial: "rawShaderMaterial"
-}, Jn = (e) => {
-	let t = qn[e];
-	t && q(`unsupportedMat:${e}`, `[threefy] <${t}/>는 WebGPU 렌더러에서 그릴 수 없다 — three의 ${e}은 GLSL 전용이다.\n  TSL 노드 재질로 옮겨라: <meshStandardNodeMaterial colorNode={…} positionNode={…}/> 처럼\n  노드를 prop으로 준다.`);
-}, B = {
+	shaderMaterial: "ShaderMaterial",
+	rawShaderMaterial: "RawShaderMaterial"
+}, Jn = {
+	shader: "ShaderMaterial",
+	rawShader: "RawShaderMaterial"
+}, Yn = (e, t) => q(`removedMat:${e}`, `[threefy] ${e}는 2.1에서 없어졌다 — three의 ${t}은 GLSL 전용이라\n  WebGPU 렌더러가 그릴 수 없다(그려지지 않는 재질을 만들어 주는 쪽이 더 나쁘다).\n  TSL 노드 재질로 옮겨라: <meshStandardNodeMaterial colorNode={…} positionNode={…}/>`), B = {
 	buffer: "BufferGeometry",
 	instancedBuffer: "InstancedBufferGeometry",
 	box: "BoxGeometry",
@@ -1593,21 +1591,21 @@ var L = {
 	teapot: "TeapotGeometry",
 	boxLine: "BoxLineGeometry",
 	loft: "LoftGeometry"
-}, V = null, H = [], Yn = null, Xn = !1, U = () => V || (H.length === 1 ? H[0] : H.length === 0 ? Yn : (Xn || (Xn = !0, console.warn("[threefy] <ThreeCanvas>가 둘 이상인데 캔버스 밖에서 threefy 상태를 물었다.\n  마지막으로 렌더된 캔버스로 답한다. 정확히 지정하려면 렌더 안에서 useThree()를 부르고\n  그 값을 effect·콜백으로 넘겨라.")), Yn ?? H[H.length - 1])), W = (e, t) => {
+}, V = null, H = [], Xn = null, Zn = !1, U = () => V || (H.length === 1 ? H[0] : H.length === 0 ? Xn : (Zn || (Zn = !0, console.warn("[threefy] <ThreeCanvas>가 둘 이상인데 캔버스 밖에서 threefy 상태를 물었다.\n  마지막으로 렌더된 캔버스로 답한다. 정확히 지정하려면 렌더 안에서 useThree()를 부르고\n  그 값을 effect·콜백으로 넘겨라.")), Xn ?? H[H.length - 1])), W = (e, t) => {
 	if (!e) return t();
 	let n = V;
-	V = e, Yn = e;
+	V = e, Xn = e;
 	try {
 		return t();
 	} finally {
 		V = n;
 	}
-}, Zn = (e) => {
-	let t = H.indexOf(e);
-	t >= 0 && H.splice(t, 1), Yn === e && (Yn = H[0] ?? null), V === e && (V = null);
 }, Qn = (e) => {
+	let t = H.indexOf(e);
+	t >= 0 && H.splice(t, 1), Xn === e && (Xn = H[0] ?? null), V === e && (V = null);
+}, $n = (e) => {
 	e.destroyTimer !== null && (clearTimeout(e.destroyTimer), e.destroyTimer = null);
-}, G = l(null), $n = (e) => {
+}, G = l(null), er = (e) => {
 	if (!e) return;
 	let { threefy: t } = X();
 	return Object.keys(e).forEach((n) => {
@@ -1616,7 +1614,7 @@ var L = {
 			typeof r == "string" && (e[n].value[i] = t.loadTexture(r));
 		});
 	}), e;
-}, er = (e, t, n) => {
+}, tr = (e, t, n) => {
 	let r = t.split("-"), i = r.length;
 	r.reduce((e, t, a) => {
 		if (a === i - 1) return Array.isArray(e) ? e : (Array.isArray(n) && typeof n[0] == "number" ? e[t] && typeof e[t] != "function" && e[t].fromArray(n) : e[t] && e[t].copy && n && (n.isVector2 || n.isVector3 || n.isVector4 || n.isColor || n.isMatrix3 || n.isMatrix4) ? e[t].copy(n) : e[t] = n, e[t]);
@@ -1626,15 +1624,15 @@ var L = {
 		} else e[t] || (e[t] = {});
 		return e[t];
 	}, e);
-}, tr = {
+}, nr = {
 	repeat: e.RepeatWrapping,
 	clamp: e.ClampToEdgeWrapping,
 	mirror: e.MirroredRepeatWrapping
-}, nr = {
+}, rr = {
 	srgb: e.SRGBColorSpace,
 	linear: e.LinearSRGBColorSpace,
 	none: e.NoColorSpace
-}, rr = (t, n, r, i) => {
+}, ir = (t, n, r, i) => {
 	let a = t[n];
 	if (!a || !a.isTexture) return;
 	let o = !1;
@@ -1646,30 +1644,30 @@ var L = {
 		let t = Array.isArray(i) ? i : [i, i], n = a[r];
 		(n.x !== t[0] || n.y !== t[1]) && (n.fromArray(t), o = !0), r === "repeat" && a.wrapS === e.ClampToEdgeWrapping && a.wrapT === e.ClampToEdgeWrapping && (a.wrapS = a.wrapT = e.RepeatWrapping, o = !0);
 	} else if (r === "wrap") {
-		let e = tr[i] ?? i;
+		let e = nr[i] ?? i;
 		(a.wrapS !== e || a.wrapT !== e) && (a.wrapS = a.wrapT = e, o = !0);
 	} else if (r === "wrapS" || r === "wrapT") {
-		let e = tr[i] ?? i;
+		let e = nr[i] ?? i;
 		a[r] !== e && (a[r] = e, o = !0);
 	} else if (r === "colorSpace") {
-		let e = nr[i] ?? i;
+		let e = rr[i] ?? i;
 		a.colorSpace !== e && (a.colorSpace = e, o = !0);
 	} else a[r] !== i && (a[r] = i, o = !0);
 	o && (a.needsUpdate = !0, t.needsUpdate = !0);
-}, ir = (e, t, n) => {
-	for (let r of z) e[r] && e[r].isTexture && rr(e, r, t, n);
-}, ar = [
+}, ar = (e, t, n) => {
+	for (let r of z) e[r] && e[r].isTexture && ir(e, r, t, n);
+}, or = [
 	"onPointerMove",
 	"onPointerOver",
 	"onPointerOut",
 	"onPointerEnter",
 	"onPointerLeave"
-], or = function() {}, sr = (e, t) => {
+], sr = function() {}, cr = (e, t) => {
 	typeof e?.traverse == "function" && e.traverse((e) => {
-		if (t) e.raycast === or && (e.raycast = e.__threefyRaycast, delete e.__threefyRaycast);
+		if (t) e.raycast === sr && (e.raycast = e.__threefyRaycast, delete e.__threefyRaycast);
 		else {
-			if (e.raycast === or) return;
-			e.__threefyRaycast = e.raycast, e.raycast = or;
+			if (e.raycast === sr) return;
+			e.__threefyRaycast = e.raycast, e.raycast = sr;
 		}
 	});
 }, K = (t, n) => {
@@ -1681,7 +1679,7 @@ var L = {
 	[...i.filter((e) => !r(e)), ...i.filter(r)].forEach((r) => {
 		if (r === "attach") return;
 		if (r === "pickable") {
-			sr(t, n[r] !== !1);
+			cr(t, n[r] !== !1);
 			return;
 		}
 		if (t.isMaterial && /^(position|rotation|scale)(-[xyz])?$/.test(r)) return;
@@ -1690,11 +1688,11 @@ var L = {
 			if (e != null) {
 				let n = r.indexOf("-");
 				if (n > 0 && z.includes(r.slice(0, n))) {
-					rr(t, r.slice(0, n), r.slice(n + 1), e);
+					ir(t, r.slice(0, n), r.slice(n + 1), e);
 					return;
 				}
 				if (/^texture[A-Z]/.test(r)) {
-					ir(t, r[7].toLowerCase() + r.slice(8), e);
+					ar(t, r[7].toLowerCase() + r.slice(8), e);
 					return;
 				}
 			}
@@ -1715,11 +1713,11 @@ var L = {
 			if (a === "object") {
 				if (t.isMaterial && i.isTexture && t[r]?._subpropSource === i) return;
 				let e = t.isMaterial && i.isTexture ? t[r] : void 0;
-				i.isObject3D || (t.isBatchedMesh && /geometry/.test(r) ? t.addGeometry(i) : t.isShaderMaterial && r === "uniforms" ? er(t, r, $n(i)) : er(t, r, i)), t.isMaterial && i.isTexture && t[r] !== e && (t.needsUpdate = !0);
+				i.isObject3D || (t.isBatchedMesh && /geometry/.test(r) ? t.addGeometry(i) : t.isShaderMaterial && r === "uniforms" ? tr(t, r, er(i)) : tr(t, r, i)), t.isMaterial && i.isTexture && t[r] !== e && (t.needsUpdate = !0);
 			} else if (a === "function") {
 				t[r] = i;
 				let e = U();
-				ar.includes(r) && e && (e.hasHoverHandler = !0);
+				or.includes(r) && e && (e.hasHoverHandler = !0);
 			} else if (a === "number") {
 				if (r === "scale") {
 					t[r]?.isVector3 && t[r].fromArray([
@@ -1742,45 +1740,45 @@ var L = {
 					t.isObject3D && (t[e[0]][e[1]] = i);
 					return;
 				}
-				er(t, r, i);
+				tr(t, r, i);
 			} else if (a === "string") if (Bn.includes(r)) Gn(t, r, i);
 			else if (z.includes(r)) {
 				let n = U()?.loadTexture(i), a = t[r];
 				if (!n && !a) return;
 				let o = !!n && a?._subpropSource === n;
 				a !== n && !o && (t[r] = n ?? null, n && (r === "map" || r === "emissiveMap" ? n.colorSpace = e.SRGBColorSpace : r === "envMap" || r === "lightMap" ? n.colorSpace = e.LinearSRGBColorSpace : n.colorSpace = e.NoColorSpace), t.needsUpdate = !0);
-			} else er(t, r, i);
-			else a === "boolean" ? t[r] = i : er(t, r, i);
+			} else tr(t, r, i);
+			else a === "boolean" ? t[r] = i : tr(t, r, i);
 		}
 	});
-}, cr = Symbol.for("react.forward_ref"), lr = Symbol.for("react.memo"), ur = (e) => typeof e == "string" ? e : e?.threeTag || e?.displayName || e?.name || e?.render?.name || e?.type?.name || "fn", dr = /* @__PURE__ */ new Set(), q = (e, t) => {
-	dr.has(e) || (dr.add(e), console.warn(t));
-}, fr = /* @__PURE__ */ new WeakMap(), pr = /* @__PURE__ */ new Map(), mr = (e, t) => {
+}, lr = Symbol.for("react.forward_ref"), ur = Symbol.for("react.memo"), dr = (e) => typeof e == "string" ? e : e?.threeTag || e?.displayName || e?.name || e?.render?.name || e?.type?.name || "fn", fr = /* @__PURE__ */ new Set(), q = (e, t) => {
+	fr.has(e) || (fr.add(e), console.warn(t));
+}, pr = /* @__PURE__ */ new WeakMap(), mr = /* @__PURE__ */ new Map(), hr = (e, t) => {
 	if (t === "fn") return;
-	let n = pr.get(t);
-	if (n || pr.set(t, n = {
+	let n = mr.get(t);
+	if (n || mr.set(t, n = {
 		distinct: 0,
 		reused: 0
-	}), fr.has(e)) {
+	}), pr.has(e)) {
 		n.reused++;
 		return;
 	}
-	fr.set(e, !0), n.distinct++, !(n.distinct < 4 || n.reused > 0) && q(`redef:${t}`, `[threefy] <${t}/>가 렌더마다 새로 정의되고 있다.\n  다른 컴포넌트 **안에서** 정의하지 마라 — 매 렌더 언마운트/재마운트돼\n  3D 객체가 통째로 다시 만들어진다. 모듈 최상위로 빼라.`);
-}, hr = null, gr = (e) => {
+	pr.set(e, !0), n.distinct++, !(n.distinct < 4 || n.reused > 0) && q(`redef:${t}`, `[threefy] <${t}/>가 렌더마다 새로 정의되고 있다.\n  다른 컴포넌트 **안에서** 정의하지 마라 — 매 렌더 언마운트/재마운트돼\n  3D 객체가 통째로 다시 만들어진다. 모듈 최상위로 빼라.`);
+}, gr = null, _r = (e) => {
 	e.handles.forEach(({ list: e, handle: t }) => {
 		let n = e.indexOf(t);
 		n >= 0 && e.splice(n, 1);
 	}), e.handles = [];
-}, _r = (e) => {
+}, vr = (e) => {
 	let t = e.pending;
-	t.length === 0 && e.handles.length === 0 || (e.cbs = t.map((e) => e.cb), !(e.handles.length === t.length && e.handles.every((e, n) => e.list === t[n].list)) && (gr(e), e.handles = t.map((t, n) => {
+	t.length === 0 && e.handles.length === 0 || (e.cbs = t.map((e) => e.cb), !(e.handles.length === t.length && e.handles.every((e, n) => e.list === t[n].list)) && (_r(e), e.handles = t.map((t, n) => {
 		let r = (...t) => e.cbs[n]?.(...t);
 		return t.list.push(r), {
 			list: t.list,
 			handle: r
 		};
 	})));
-}, vr = () => {
+}, yr = () => {
 	let e = _(null);
 	e.current === null && (e.current = {
 		pending: [],
@@ -1789,71 +1787,71 @@ var L = {
 	});
 	let t = e.current;
 	return m(() => {
-		_r(t);
-	}), m(() => () => gr(t), []), t;
-}, yr = (e) => {
-	let t = vr(), n = p(G)?.threefy, r = hr;
-	hr = t, t.pending = [];
+		vr(t);
+	}), m(() => () => _r(t), []), t;
+}, br = (e) => {
+	let t = yr(), n = p(G)?.threefy, r = gr;
+	gr = t, t.pending = [];
 	try {
 		return W(n, e);
 	} finally {
-		hr = r;
+		gr = r;
 	}
-}, br = /* @__PURE__ */ new WeakMap(), xr = (e) => {
-	let t = br.get(e);
+}, xr = /* @__PURE__ */ new WeakMap(), Sr = (e) => {
+	let t = xr.get(e);
 	if (t) return t;
 	let n;
 	if (typeof e == "function") {
 		if (e.prototype?.isReactComponent) {
-			let t = ur(e);
+			let t = dr(e);
 			return q(`class:${t}`, `[threefy] <${t}/>는 class 컴포넌트다.\n  threefy 트리 안에서는 지원하지 않는다 — 함수 컴포넌트로 바꿔라.`), e;
 		}
-		n = (t) => yr(() => Sr(e(t)));
-	} else if (e?.$$typeof === cr) n = (t) => {
+		n = (t) => br(() => Cr(e(t)));
+	} else if (e?.$$typeof === lr) n = (t) => {
 		let n = t, r = null;
 		if ("ref" in t) {
 			r = t.ref ?? null, n = {};
 			for (let e in t) e !== "ref" && (n[e] = t[e]);
 		}
-		return yr(() => Sr(e.render(n, r)));
+		return br(() => Cr(e.render(n, r)));
 	};
-	else if (e?.$$typeof === lr) {
-		let t = xr(e.type);
+	else if (e?.$$typeof === ur) {
+		let t = Sr(e.type);
 		n = t === e.type ? e : f(t, e.compare);
 	} else return e;
-	return n.displayName = ur(e), br.set(e, n), n;
-}, Sr = (e) => d(e) ? J(e) : o.Children.map(e, J), Cr = (e, t) => t.key === null ? u(e, t.props) : u(e, {
+	return n.displayName = dr(e), xr.set(e, n), n;
+}, Cr = (e) => d(e) ? J(e) : o.Children.map(e, J), wr = (e, t) => t.key === null ? u(e, t.props) : u(e, {
 	key: t.key,
 	...t.props
 }), J = (e) => {
 	if (!d(e)) return e;
 	let t = e.type;
-	if (typeof t == "symbol") return wr(e);
+	if (typeof t == "symbol") return Tr(e);
 	if (typeof t == "string") {
 		let n = N[t];
-		return n ? Cr(n, e) : e;
+		return n ? wr(n, e) : e;
 	}
 	if (t.threeTag) return e;
-	mr(t, ur(t));
-	let n = xr(t);
-	if (n !== t) return Cr(n, e);
+	hr(t, dr(t));
+	let n = Sr(t);
+	if (n !== t) return wr(n, e);
 	let r = e.props?.children;
 	return r === void 0 || typeof r == "function" ? e : c(e, { children: o.Children.map(r, J) });
-}, wr = (e) => {
+}, Tr = (e) => {
 	let t = Symbol.keyFor(e.type);
 	if (t === "react.fragment") return /* @__PURE__ */ F("group", { children: e.props.children }, e.key ?? void 0);
 	if (t === "react.suspense") {
 		let { fallback: t, children: n } = e.props;
 		return c(e, {
-			fallback: Sr(t),
+			fallback: Cr(t),
 			children: o.Children.map(n, J)
 		});
 	}
 	let n = e.props?.children;
 	return n === void 0 || typeof n == "function" ? e : c(e, { children: o.Children.map(n, J) });
-}, Tr = l(null), Er = (e, t) => {
+}, Er = l(null), Dr = (e, t) => {
 	e && (typeof e == "function" ? e(t) : e.current = t);
-}, Dr = () => {
+}, Or = () => {
 	let e = {
 		object: null,
 		entries: /* @__PURE__ */ new Map(),
@@ -1878,9 +1876,9 @@ var L = {
 			e.entries.delete(t), !(!n || !n.object) && (e.unplace ? e.unplace(n.object) : n.object.isObject3D && n.object.removeFromParent(), n.attach && n.object.userData?.__threefyOwned && typeof n.object.dispose == "function" && (n.object.dispose(), n.object.userData.__threefyDisposed = !0));
 		}
 	}, e;
-}, Or = (t, n, r) => {
-	let { ref: i } = t, a = p(Tr), s = p(G)?.threefy ?? Y(), c = _(null);
-	c.current === null && (c.current = Dr());
+}, kr = (t, n, r) => {
+	let { ref: i } = t, a = p(Er), s = p(G)?.threefy ?? Y(), c = _(null);
+	c.current === null && (c.current = Or());
 	let l = c.current, u = _(null);
 	u.current === null && (u.current = {});
 	let d = u.current, f = _(null);
@@ -1927,28 +1925,28 @@ var L = {
 			}
 		};
 		let c = [...l.entries.values()].filter((e) => !e.attach).sort((e, t) => e.order - t.order).map((e) => e.object);
-		l.placed && l.placed.length === c.length && l.placed.every((e, t) => e === c[t]) || (l.placed = c, c.forEach((e) => l.place(e))), Er(i, o), a && a.register(d, o, g, h);
+		l.placed && l.placed.length === c.length && l.placed.every((e, t) => e === c[t]) || (l.placed = c, c.forEach((e) => l.place(e))), Dr(i, o), a && a.register(d, o, g, h);
 	}), n === "ThreeProvider" && l.object === null && l.build(), m(() => {
 		l.build();
 	}), m(() => () => {
 		a && W(s, () => a.unregister(d));
 	}, [a]);
 	let v = o.Children.map(t.children, J);
-	return /* @__PURE__ */ F(Tr, {
+	return /* @__PURE__ */ F(Er, {
 		value: l.api,
 		children: v
 	});
 };
-function kr(e, t) {
+function Ar(e, t) {
 	switch (t.type) {
 		case "myAction": return e;
 		default: return e;
 	}
 }
-var Ar = () => {
-	(/* @__PURE__ */ "Color.Vector2.Vector3.Vector4.Scene.Object3D.Group.Sprite.Line.LineLoop.LineSegments.Points.Audio.PositionalAudio.LOD.Fog.FogExp2.AmbientLight.DirectionalLight.HemisphereLight.Light.LightProbe.PointLight.RectAreaLight.SpotLight.ArrayCamera.Camera.CubeCamera.OrthographicCamera.PerspectiveCamera.StereoCamera.BufferAttribute.GLBufferAttribute.InstancedBufferAttribute.InstancedInterleavedBuffer.InterleavedBuffer.InterleavedBufferAttribute.BufferGeometry.InstancedBufferGeometry.BoxGeometry.CapsuleGeometry.CircleGeometry.ConeGeometry.CylinderGeometry.DodecahedronGeometry.EdgesGeometry.ExtrudeGeometry.IcosahedronGeometry.LatheGeometry.OctahedronGeometry.PlaneGeometry.PolyhedronGeometry.RingGeometry.ShapeGeometry.SphereGeometry.TetrahedronGeometry.TorusGeometry.TorusKnotGeometry.TubeGeometry.WireframeGeometry.LineBasicMaterial.LineDashedMaterial.MeshBasicMaterial.MeshDepthMaterial.MeshDistanceMaterial.MeshLambertMaterial.MeshMatcapMaterial.MeshNormalMaterial.MeshPhongMaterial.MeshPhysicalMaterial.MeshStandardMaterial.MeshToonMaterial.PointsMaterial.RawShaderMaterial.ShaderMaterial.ShadowMaterial.SpriteMaterial.NodeMaterial.MeshBasicNodeMaterial.MeshLambertNodeMaterial.MeshPhongNodeMaterial.MeshStandardNodeMaterial.MeshPhysicalNodeMaterial.MeshToonNodeMaterial.MeshMatcapNodeMaterial.MeshNormalNodeMaterial.MeshSSSNodeMaterial.LineBasicNodeMaterial.LineDashedNodeMaterial.Line2NodeMaterial.PointsNodeMaterial.SpriteNodeMaterial.ShadowNodeMaterial.VolumeNodeMaterial.BatchedMesh.InstancedMesh.Mesh.SkinnedMesh.CanvasTexture.CompressedTexture.CompressedArrayTexture.CubeTexture.Data3DTexture.DataArrayTexture.DataTexture.DepthTexture.FramebufferTexture.Texture.VideoTexture.ArrowHelper.AxesHelper.BoxHelper.Box3Helper.CameraHelper.DirectionalLightHelper.GridHelper.PolarGridHelper.HemisphereLightHelper.PlaneHelper.PointLightHelper.SkeletonHelper.SpotLightHelper.Controls.ArcballControls.DragControls.FirstPersonControls.FlyControls.MapControls.OrbitControls.PointerLockControls.TrackballControls.TransformControls.RenderPass.ShaderPass.GlitchPass.GTAOPass.OutlinePass.UnrealBloomPass.BokehPass.OutputPass.DotScreenPass.RGBShiftPass.FXAAPass.AnaglyphEffect.AsciiEffect.OutlineEffect.ParallaxBarrierEffect.StereoEffect.RoundedBoxGeometry.ConvexGeometry.DecalGeometry.ParametricGeometry.TextGeometry.TeapotGeometry.BoxLineGeometry.LoftGeometry.Line2.LineSegments2.Wireframe.LineGeometry.LineSegmentsGeometry.WireframeGeometry2.Primitive.Geometry.Material.BatchedMaterial.CurvePath.InstancedObject".split(".")).forEach((e) => li(e)), ui(), di(), $r();
+var jr = () => {
+	(/* @__PURE__ */ "Color.Vector2.Vector3.Vector4.Scene.Object3D.Group.Sprite.Line.LineLoop.LineSegments.Points.Audio.PositionalAudio.LOD.Fog.FogExp2.AmbientLight.DirectionalLight.HemisphereLight.Light.LightProbe.PointLight.RectAreaLight.SpotLight.ArrayCamera.Camera.CubeCamera.OrthographicCamera.PerspectiveCamera.StereoCamera.BufferAttribute.GLBufferAttribute.InstancedBufferAttribute.InstancedInterleavedBuffer.InterleavedBuffer.InterleavedBufferAttribute.BufferGeometry.InstancedBufferGeometry.BoxGeometry.CapsuleGeometry.CircleGeometry.ConeGeometry.CylinderGeometry.DodecahedronGeometry.EdgesGeometry.ExtrudeGeometry.IcosahedronGeometry.LatheGeometry.OctahedronGeometry.PlaneGeometry.PolyhedronGeometry.RingGeometry.ShapeGeometry.SphereGeometry.TetrahedronGeometry.TorusGeometry.TorusKnotGeometry.TubeGeometry.WireframeGeometry.LineBasicMaterial.LineDashedMaterial.MeshBasicMaterial.MeshDepthMaterial.MeshDistanceMaterial.MeshLambertMaterial.MeshMatcapMaterial.MeshNormalMaterial.MeshPhongMaterial.MeshPhysicalMaterial.MeshStandardMaterial.MeshToonMaterial.PointsMaterial.ShadowMaterial.SpriteMaterial.NodeMaterial.MeshBasicNodeMaterial.MeshLambertNodeMaterial.MeshPhongNodeMaterial.MeshStandardNodeMaterial.MeshPhysicalNodeMaterial.MeshToonNodeMaterial.MeshMatcapNodeMaterial.MeshNormalNodeMaterial.MeshSSSNodeMaterial.LineBasicNodeMaterial.LineDashedNodeMaterial.Line2NodeMaterial.PointsNodeMaterial.SpriteNodeMaterial.ShadowNodeMaterial.VolumeNodeMaterial.BatchedMesh.InstancedMesh.Mesh.SkinnedMesh.CanvasTexture.CompressedTexture.CompressedArrayTexture.CubeTexture.Data3DTexture.DataArrayTexture.DataTexture.DepthTexture.FramebufferTexture.Texture.VideoTexture.ArrowHelper.AxesHelper.BoxHelper.Box3Helper.CameraHelper.DirectionalLightHelper.GridHelper.PolarGridHelper.HemisphereLightHelper.PlaneHelper.PointLightHelper.SkeletonHelper.SpotLightHelper.Controls.ArcballControls.DragControls.FirstPersonControls.FlyControls.MapControls.OrbitControls.PointerLockControls.TrackballControls.TransformControls.RenderPass.ShaderPass.GlitchPass.GTAOPass.OutlinePass.UnrealBloomPass.BokehPass.OutputPass.DotScreenPass.RGBShiftPass.FXAAPass.AnaglyphEffect.AsciiEffect.OutlineEffect.ParallaxBarrierEffect.StereoEffect.RoundedBoxGeometry.ConvexGeometry.DecalGeometry.ParametricGeometry.TextGeometry.TeapotGeometry.BoxLineGeometry.LoftGeometry.Line2.LineSegments2.Wireframe.LineGeometry.LineSegmentsGeometry.WireframeGeometry2.Primitive.Geometry.Material.BatchedMaterial.CurvePath.InstancedObject".split(".")).forEach((e) => di(e)), fi(), pi(), ei(), ti();
 };
-function jr(e) {
+function Mr(e) {
 	Vt(), p(G) && q("nestedCanvas", "[threefy] <ThreeCanvas> 안에 <ThreeCanvas>가 또 있다.\n  캔버스가 하나 더 생겨 겹치고, 안쪽 요소는 안쪽 씬으로 간다.\n  씬을 나눠 조립하려는 것이라면 안쪽 <ThreeCanvas>를 지우고 컴포넌트나 <group>을 써라.");
 	let t = _(null);
 	t.current === null && (t.current = {
@@ -1956,7 +1954,7 @@ function jr(e) {
 		destroyTimer: null
 	});
 	let n = t.current;
-	Qn(n);
+	$n(n);
 	let { dom: r, width: i, height: a, style: o, className: c } = e, l = _(null), u = !r;
 	if (n.threefy === null) {
 		let e = new Jt({
@@ -1969,7 +1967,7 @@ function jr(e) {
 			e._destroyed || e.animate();
 		}), e.reactElements = N, H.push(e), n.threefy = e;
 	}
-	let d = n.threefy, [, f] = g(kr, d), v = {
+	let d = n.threefy, [, f] = g(Ar, d), v = {
 		threefy: d,
 		dispatch: f
 	};
@@ -1993,14 +1991,14 @@ function jr(e) {
 		i,
 		a,
 		d
-	]), m(() => (Qn(n), () => {
+	]), m(() => ($n(n), () => {
 		n.destroyTimer = setTimeout(() => {
 			n.destroyTimer = null;
 			let e = n.threefy;
-			n.threefy = null, Zn(e), e?.destroy();
+			n.threefy = null, Qn(e), e?.destroy();
 		}, 0);
 	}), []), W(d, () => {
-		let t = Or(e, "ThreeProvider", () => d.scene), n = /* @__PURE__ */ F(G, {
+		let t = kr(e, "ThreeProvider", () => d.scene), n = /* @__PURE__ */ F(G, {
 			value: v,
 			children: /* @__PURE__ */ F(s, {
 				fallback: null,
@@ -2022,8 +2020,8 @@ function jr(e) {
 		});
 	});
 }
-function Mr(e) {
-	return jr(e);
+function Nr(e) {
+	return Mr(e);
 }
 var Y = () => U(), X = () => {
 	let e = U();
@@ -2042,16 +2040,16 @@ var Y = () => U(), X = () => {
 		set: e.set.bind(e)
 	};
 };
-function Nr(e) {
+function Pr(e) {
 	return e === void 0 ? X() : e(U());
 }
-function Pr(e, t = []) {
+function Fr(e, t = []) {
 	let n = _(null), r = _(null), i = p(G)?.threefy ?? Y();
 	if (r.current === null && (r.current = {
 		pending: !1,
 		cb: null,
 		threefy: null
-	}), r.current.threefy = i, n.current === null) {
+	}), i && (r.current.threefy = i), n.current === null) {
 		let e = r.current, t = null;
 		n.current = {
 			get current() {
@@ -2059,28 +2057,36 @@ function Pr(e, t = []) {
 			},
 			set current(n) {
 				let r = t !== n;
-				t = n, r && n && e.pending && (e.pending = !1, queueMicrotask(() => W(e.threefy, () => e.cb(n, e.threefy.scene))));
+				t = n, r && n && e.pending && (e.pending = !1, queueMicrotask(() => {
+					let t = e.threefy ?? Y();
+					W(t, () => e.cb(n, t?.scene));
+				}));
 			}
 		};
 	}
 	return m(() => {
 		let t = r.current;
 		t.cb = e;
-		let a = n.current.current;
-		a ? W(i, () => e(a, i.scene)) : t.pending = !0;
+		let i = n.current.current;
+		if (!i) {
+			t.pending = !0;
+			return;
+		}
+		let a = t.threefy ?? Y();
+		W(a, () => e(i, a?.scene));
 	}, [...t]), n.current;
 }
-var Fr = /* @__PURE__ */ new Set(), Ir = (e, t) => {
-	Fr.has(e) || (Fr.add(e), console.warn(`[threefy] ${e}() is deprecated and will be removed in a future release. Use ${t}() instead.`));
-}, Lr = (e, t = []) => (Ir("useRefEffect", "useSetup"), Pr(e, t)), Rr = o.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, zr = !1;
-function Br() {
-	if (Rr) {
-		let e = Rr.H;
+var Ir = /* @__PURE__ */ new Set(), Lr = (e, t) => {
+	Ir.has(e) || (Ir.add(e), console.warn(`[threefy] ${e}() is deprecated and will be removed in a future release. Use ${t}() instead.`));
+}, Rr = (e, t = []) => (Lr("useRefEffect", "useSetup"), Fr(e, t)), zr = o.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, Br = !1;
+function Vr() {
+	if (zr) {
+		let e = zr.H;
 		return !!e && e.useRef !== e.useState;
 	}
-	return zr || (zr = !0, console.warn("[threefy] React의 렌더 단계를 판정할 수 없다 (내부값이 바뀐 듯하다).\n  useFrame·useLoader 등이 예전 동작으로 떨어진다 (등록이 중복되거나 화면이 자동 갱신되지 않는다).\n  react 버전을 확인하라.")), !1;
+	return Br || (Br = !0, console.warn("[threefy] React의 렌더 단계를 판정할 수 없다 (내부값이 바뀐 듯하다).\n  useFrame·useLoader 등이 예전 동작으로 떨어진다 (등록이 중복되거나 화면이 자동 갱신되지 않는다).\n  react 버전을 확인하라.")), !1;
 }
-function Vr(e) {
+function Hr(e) {
 	let t = _(e);
 	h(() => {
 		t.current = e;
@@ -2088,34 +2094,34 @@ function Vr(e) {
 	let n = _(null);
 	return n.current === null && (n.current = (...e) => t.current(...e)), n.current;
 }
-function Hr(e, t = []) {
-	return Ir("useRefCallback", "useHandle"), Vr(e);
+function Ur(e, t = []) {
+	return Lr("useRefCallback", "useHandle"), Hr(e);
 }
-var Ur = (e, t) => (e.push(t), () => {
+var Wr = (e, t) => (e.push(t), () => {
 	let n = e.indexOf(t);
 	n >= 0 && e.splice(n, 1);
-}), Wr = (e, t) => {
-	if (hr) {
-		hr.pending.push({
+}), Gr = (e, t) => {
+	if (gr) {
+		gr.pending.push({
 			list: e,
 			cb: t
 		});
 		return;
 	}
-	if (!Br()) return Ur(e, t);
-	let n = Vr(t);
-	m(() => Ur(e, n), []);
+	if (!Vr()) return Wr(e, t);
+	let n = Hr(t);
+	m(() => Wr(e, n), []);
 };
-function Gr(e) {
-	return Wr(U().renderCallbacks, e);
-}
 function Kr(e) {
-	return Wr(U().keyDownCallbacks, e);
+	return Gr(U().renderCallbacks, e);
 }
 function qr(e) {
-	return Wr(U().keyUpCallbacks, e);
+	return Gr(U().keyDownCallbacks, e);
 }
-var Jr = (e, t, n) => {
+function Jr(e) {
+	return Gr(U().keyUpCallbacks, e);
+}
+var Yr = (e, t, n) => {
 	let r = (e, t, n, i, a) => {
 		let o = "is" + t;
 		(Array.isArray(e) ? e : [e]).forEach((e) => {
@@ -2127,40 +2133,45 @@ var Jr = (e, t, n) => {
 		});
 	}, i = [];
 	return r(e, t, n, i, /* @__PURE__ */ new WeakSet()), i;
-}, Yr = (e, t) => {
+}, Xr = (e, t) => {
 	let n = U().scene;
-	if (t === void 0) return Jr(n, e);
+	if (t === void 0) return Yr(n, e);
 	let r = Array.isArray(t) ? t : [t];
 	if (e === "Object3D") {
 		let e = (e) => e.split("/").pop().split("?")[0];
 		r = r.map((t) => e(t));
 	}
-	let i = Jr(n, e), a = [];
+	let i = Yr(n, e), a = [];
 	return r.forEach((e) => {
 		a.push(i.filter((t) => t.name === e));
 	}), a.length === 1 ? a[0] : a;
-}, Xr = () => {
+}, Zr = () => {
 	let e = U();
 	return {
 		replay: () => e.replayAnimate(),
 		pause: () => e.pauseAnimate(),
 		flush: () => e.flushAnimate()
 	};
-}, Zr = {
+}, Qr = {
 	LOD: "lod",
 	RGBShiftPass: "rgbShiftPass",
 	FXAAPass: "fxaaPass"
-}, Qr = {
+}, $r = {
 	rGBShiftPass: "rgbShiftPass",
 	fXAAPass: "fxaaPass"
-}, $r = () => {
-	Object.entries(Qr).forEach(([e, t]) => {
+}, ei = () => {
+	Object.entries($r).forEach(([e, t]) => {
 		let n = N[t];
 		if (!n) return;
 		let r = (r) => (q(`tag:${e}`, `[threefy] <${e}/> is deprecated and will be removed in a future release. Use <${t}/> instead.`), n(r));
 		r.threeTag = n.threeTag, r.threeType = n.threeType, r.displayName = e, N[e] = r;
 	});
-}, ei = (e, t) => {
+}, ti = () => {
+	Object.entries(qn).forEach(([e, t]) => {
+		let n = () => (Yn(`<${e}/>`, t), null);
+		n.threeTag = e, n.displayName = e, N[e] = n;
+	});
+}, ni = (e, t) => {
 	if (Object.is(e, t)) return !0;
 	if (!e || !t || typeof e != "object" || typeof t != "object") return !1;
 	if (typeof e.equals == "function" && e.constructor === t.constructor) return e.equals(t);
@@ -2168,15 +2179,15 @@ var Jr = (e, t, n) => {
 	if (e.constructor !== Object || t.constructor !== Object) return !1;
 	let n = Object.keys(e), r = Object.keys(t);
 	return n.length === r.length && n.every((n) => Object.is(e[n], t[n]));
-}, ti = (e, t, n) => {
+}, ri = (e, t, n) => {
 	let r = e?.userData?.__threefyArgs;
-	return !r || r.key !== t || r.args.length !== n.length ? !1 : r.args.every((e, t) => ei(e, n[t]));
-}, ni = (e, t, n) => {
+	return !r || r.key !== t || r.args.length !== n.length ? !1 : r.args.every((e, t) => ni(e, n[t]));
+}, ii = (e, t, n) => {
 	e?.userData && (e.userData.__threefyArgs = {
 		key: t,
 		args: [...n]
 	});
-}, ri = (e) => {
+}, ai = (e) => {
 	let { camera: t, renderer: n, scene: r } = U();
 	switch (e) {
 		case "arcball": return [
@@ -2198,33 +2209,32 @@ var Jr = (e, t, n) => {
 		case "transform": return [t, n.domElement];
 		default: return [];
 	}
-}, ii = (e, t, n) => {
+}, oi = (e, t, n) => {
 	let r = e?.__threefyArgs;
-	return !r || r.key !== t || r.args.length !== n.length ? !1 : r.args.every((e, t) => ei(e, n[t]));
-}, ai = (e, t, n, r) => {
+	return !r || r.key !== t || r.args.length !== n.length ? !1 : r.args.every((e, t) => ni(e, n[t]));
+}, si = (e, t, n, r) => {
 	let i = e.current;
-	if (i && ii(i, t, n)) return i;
+	if (i && oi(i, t, n)) return i;
 	let a = r();
 	return a.__threefyArgs = {
 		key: t,
 		args: [...n]
 	}, a;
-}, oi = (e) => e.replace(/Controls$/, "").replace(/^./, (e) => e.toLowerCase()), si = (e, t, n) => {
+}, ci = (e) => e.replace(/Controls$/, "").replace(/^./, (e) => e.toLowerCase()), li = (e, t, n) => {
 	let r = U(), i = e.current;
 	if (i && i.__threefyControlsKey === t) return r.setControls(i), i;
 	i && r.removeControls(i);
 	let a = new L[t](...n);
 	return a.__threefyControlsKey = t, e.current = a, r.setControls(a), a;
-}, ci = (e) => {
+}, ui = (e) => {
 	if (!e) return;
 	e.isSprite || e.geometry?.dispose();
 	let t = e.material;
 	Array.isArray(t) ? t.forEach((e) => e?.dispose?.()) : t?.dispose?.();
-}, li = (t) => {
-	P(Zr[t] ?? `${t[0].toLowerCase()}${t.slice(1)}`, (n) => {
+}, di = (t) => {
+	P(Qr[t] ?? `${t[0].toLowerCase()}${t.slice(1)}`, (n) => {
 		let r = _();
-		return r.current ??= { current: null }, Or(n, t, (n, i) => {
-			Jn(t);
+		return r.current ??= { current: null }, kr(n, t, (n, i) => {
 			let { ref: a, children: o, args: s, type: c, count: l, object: u, onLoad: d, fallback: f, ...p } = n, m = a && typeof a != "function" ? a : r.current;
 			m.current?.userData?.__threefyDisposed && (m.current = null);
 			let h = Array.isArray(s) ? [...s] : [];
@@ -2246,13 +2256,16 @@ var Jr = (e, t, n) => {
 				g = u;
 			} else if (t === "Geometry") {
 				let t = c?.match(/(rounded|convex|decal|parametric|text|teapot|boxLine|loft)/), n = c === void 0 ? "buffer" : c, r = t ? `x:${B[c]}` : `t:${B[n]}`;
-				ti(m.current, r, h) || (m.current && m.current.dispose(), m.current = t ? new L[B[c]](...h) : new e[B[n]](...h), ni(m.current, r, h)), g = m.current;
+				ri(m.current, r, h) || (m.current && m.current.dispose(), m.current = t ? new L[B[c]](...h) : new e[B[n]](...h), ii(m.current, r, h)), g = m.current;
 			} else if (t === "Material") {
 				let t = c === void 0 ? "basic" : c, n = Kn[t];
-				n ||= (q(`matType:${t}`, `[threefy] <material type={'${t}'}/>는 모르는 재질 타입이다. 'basic'으로 대체한다.\n  쓸 수 있는 값: ${Object.keys(Kn).join(", ")}`), Kn.basic), Jn(n);
+				if (!n) {
+					let e = Jn[t];
+					e ? Yn(`<material type={'${t}'}/>`, e) : q(`matType:${t}`, `[threefy] <material type={'${t}'}/>는 모르는 재질 타입이다. 'basic'으로 대체한다.\n  쓸 수 있는 값: ${Object.keys(Kn).join(", ")}`), n = Kn.basic;
+				}
 				let r = `m:${n}`;
-				ti(m.current, r, h) || (m.current && m.current.dispose(), m.current = new e[n](), ni(m.current, r, h)), g = m.current;
-			} else if (t === "BatchedMaterial") g = ai(m, `b:${t}`, h, () => new Yt[t](...h));
+				ri(m.current, r, h) || (m.current && m.current.dispose(), m.current = new e[n](), ii(m.current, r, h)), g = m.current;
+			} else if (t === "BatchedMaterial") g = si(m, `b:${t}`, h, () => new Yt[t](...h));
 			else if (t === "Controls") {
 				let e = (e, t) => {
 					let { movementSpeed: r = 10, lookSpeed: i = .05, rollSpeed: a = .2, enableDamping: o = !0, dampingFactor: s = .075, rotateSpeed: c = 5 } = n;
@@ -2274,17 +2287,17 @@ var Jr = (e, t, n) => {
 							break;
 					}
 				}, t = c;
-				(typeof t != "string" || t.length === 0) && (q("controlsType", "[threefy] <controls/>에는 type이 필요하다 (eg: type={'orbit'}). 'orbit'으로 대체한다.\n  쓸 수 있는 값: arcball, drag, firstPerson, fly, map, orbit, pointerLock, trackball, transform"), t = "orbit"), h.length === 0 && (h = ri(t)), e(t, p), g = si(m, t[0].toUpperCase() + t.slice(1) + "Controls", h);
-			} else if (t.match(/(Controls)$/)) h.length === 0 && (h = ri(oi(t))), g = si(m, t, h);
-			else if (t.match(/(Pass|Effect)$/)) g = ai(m, `p:${t}`, h, () => new L[t](...h));
+				(typeof t != "string" || t.length === 0) && (q("controlsType", "[threefy] <controls/>에는 type이 필요하다 (eg: type={'orbit'}). 'orbit'으로 대체한다.\n  쓸 수 있는 값: arcball, drag, firstPerson, fly, map, orbit, pointerLock, trackball, transform"), t = "orbit"), h.length === 0 && (h = ai(t)), e(t, p), g = li(m, t[0].toUpperCase() + t.slice(1) + "Controls", h);
+			} else if (t.match(/(Controls)$/)) h.length === 0 && (h = ai(ci(t))), g = li(m, t, h);
+			else if (t.match(/(Pass|Effect)$/)) g = si(m, `p:${t}`, h, () => new L[t](...h));
 			else if (t.match(/Geometry2?$/)) {
 				let n = `c:${t}`;
-				ti(m.current, n, h) || (m.current && m.current.dispose(), m.current = new (L[t] || e[t])(...h), ni(m.current, n, h)), g = m.current;
+				ri(m.current, n, h) || (m.current && m.current.dispose(), m.current = new (L[t] || e[t])(...h), ii(m.current, n, h)), g = m.current;
 			} else t === "CurvePath" ? (g = m.current ? m.current : new e.Group(...h), g.forCurvePath = !0) : g = m.current ? m.current : new (L[t] || e[t])(...h);
 			return K(g, i), K(g, p), t !== "Primitive" && g.userData && (g.userData.__threefyOwned = !0), m.current = g, g;
 		});
 	}, t);
-}, ui = () => {
+}, fi = () => {
 	let t = /* @__PURE__ */ "box.capsule.circle.cone.cylinder.dodecahedron.extrude.icosahedron.lathe.octahedron.plane.polyhedron.ring.shape.sphere.tetrahedron.torus.torusKnot.tube.rounded.convex.decal.parametric.text.teapot.boxLine.loft.lineCurve.ellipseCurve.arcCurve.catmullRom3.splineCurve.bezierCurve.nurbsCurve.curve.nurbsSurface".split("."), n = [
 		"line",
 		"arc",
@@ -2322,8 +2335,8 @@ var Jr = (e, t, n) => {
 	t.forEach((t) => {
 		P(t, (a) => {
 			let o = _();
-			return o.current ??= { current: null }, Or(a, t, (a, s) => {
-				let { ref: c, children: l, args: u, type: d, ...f } = a, p = c && typeof c != "function" ? c : o.current, m = Array.isArray(u) ? u : [], h = `o:${t}:${d ?? ""}`, g = !!p.current && !ti(p.current, h, m), _;
+			return o.current ??= { current: null }, kr(a, t, (a, s) => {
+				let { ref: c, children: l, args: u, type: d, ...f } = a, p = c && typeof c != "function" ? c : o.current, m = Array.isArray(u) ? u : [], h = `o:${t}:${d ?? ""}`, g = !!p.current && !ri(p.current, h, m), _;
 				if (p.current && !g) _ = p.current, K(_.material, f);
 				else {
 					let a = p.current, o = Array.isArray(u) ? [...u] : [], s, c, l;
@@ -2352,13 +2365,13 @@ var Jr = (e, t, n) => {
 						let t = Kn[g];
 						t ||= "Mesh" + g[0].toUpperCase() + g.slice(1) + "Material", v = t.startsWith("Points") ? "Points" : t.startsWith("Sprite") ? "Sprite" : t.startsWith("Line") ? "Line" : "Mesh", y = new e[t](), K(y, f);
 					}
-					_ ||= new (L[v] || e[v])(s, y), (g === "dashed" || g === "dashedNode" || g === "line2Node") && _.computeLineDistances(), c && (_.userData.curve = c), l && (_.userData.surface = l), ni(_, h, m), a && a !== _ && ci(a);
+					_ ||= new (L[v] || e[v])(s, y), (g === "dashed" || g === "dashedNode" || g === "line2Node") && _.computeLineDistances(), c && (_.userData.curve = c), l && (_.userData.surface = l), ii(_, h, m), a && a !== _ && ui(a);
 				}
 				return K(_, s), K(_, f), p.current = _, _;
 			});
 		}, t);
 	});
-}, di = () => {
+}, pi = () => {
 	P("background", (e) => {
 		let t = p(G)?.threefy ?? Y(), { url: n, texture: r, color: i, onLoad: a } = e, o = n === void 0 ? r === void 0 ? i === void 0 ? 1644825 : i : r : n;
 		return m(() => {
@@ -2494,10 +2507,10 @@ var Jr = (e, t, n) => {
 		});
 	}, "ShadowPlaneReceiver");
 };
-Ar();
+jr();
 //#endregion
 //#region src/MTLExporter.js
-var fi = class {
+var mi = class {
 	parse(e) {
 		let t = "", n = {}, r = /* @__PURE__ */ new Set(), i = /* @__PURE__ */ new Map(), a = /* @__PURE__ */ new Set(), o = /* @__PURE__ */ new Map();
 		function s(e) {
@@ -2552,7 +2565,7 @@ var fi = class {
 			names: o
 		};
 	}
-}, pi = class {
+}, hi = class {
 	parse(e, r, o = {}) {
 		if (o = Object.assign({
 			version: "1.4.1",
@@ -2848,16 +2861,16 @@ Z.exporters = {}, Z.setExporter = (e) => {
 		...e
 	};
 };
-var mi = (e) => {
+var gi = (e) => {
 	switch (e.split(".").pop().toLowerCase()) {
 		case "obj":
 			Z.setExporter({
 				OBJExporter: lt,
-				MTLExporter: fi
+				MTLExporter: mi
 			});
 			break;
 		case "dae":
-			Z.setExporter({ ColladaExporter: pi });
+			Z.setExporter({ ColladaExporter: hi });
 			break;
 		case "glb":
 			Z.setExporter({ GLTFExporter: ct });
@@ -2872,34 +2885,34 @@ var mi = (e) => {
 			Z.setExporter({ PLYExporter: ut });
 			break;
 	}
-}, hi = (e, t) => {
+}, _i = (e, t) => {
 	let n = new Z();
-	mi(e), n.saveFile(e, t);
-}, gi = 0, _i = () => {
+	gi(e), n.saveFile(e, t);
+}, vi = 0, yi = () => {
 	try {
 		return X().threefy.dom;
 	} catch {
 		return null;
 	}
-}, vi = (e) => {
+}, bi = (e) => {
 	if (e === document.body) return;
 	let t = window.getComputedStyle(e).position;
 	(!t || t === "static") && (e.style.position = "relative");
-}, yi = "threefy-dragover-style", bi = () => {
-	if (document.getElementById(yi)) return;
+}, xi = "threefy-dragover-style", Si = () => {
+	if (document.getElementById(xi)) return;
 	let e = document.createElement("style");
-	e.id = yi, e.textContent = "\n        .threefy-dragover::after {\n            content: '';\n            position: absolute;\n            inset: 0;\n            pointer-events: none;\n            z-index: 9;\n            border: 3px dashed #3276c3;\n            border-radius: 6px;\n            background-color: rgba( 50, 118, 195, 0.12 );\n        }\n    ", document.head.appendChild(e);
-}, xi = `https://unpkg.com/three@0.${e.REVISION}.0/examples/jsm/libs/basis/`, Si = "https://www.gstatic.com/draco/versioned/decoders/1.5.7/", Q = function(t) {
+	e.id = xi, e.textContent = "\n        .threefy-dragover::after {\n            content: '';\n            position: absolute;\n            inset: 0;\n            pointer-events: none;\n            z-index: 9;\n            border: 3px dashed #3276c3;\n            border-radius: 6px;\n            background-color: rgba( 50, 118, 195, 0.12 );\n        }\n    ", document.head.appendChild(e);
+}, Ci = `https://unpkg.com/three@0.${e.REVISION}.0/examples/jsm/libs/basis/`, wi = "https://www.gstatic.com/draco/versioned/decoders/1.5.7/", Q = function(t) {
 	let n = this;
 	this.threefy = t ?? null;
 	let r = () => n.threefy ?? X().threefy;
 	this.imageFiles = [], this.mtlFile = null, this.loadItemList = (e) => {
-		wi.getFilesFromItemList(e, (e, t) => {
+		Ei.getFilesFromItemList(e, (e, t) => {
 			n.loadFiles(e, t);
 		});
 	}, this.loadFiles = async function(e, t) {
 		if (e.length > 0) {
-			t ||= wi.createFilesMap(e);
+			t ||= Ei.createFilesMap(e);
 			let n = l();
 			n.setURLModifier((e) => {
 				e = e.replace(/^(\.?\/)/, "");
@@ -2912,7 +2925,7 @@ var mi = (e) => {
 		}
 	}, this.loadFile = function(e, t) {
 		let r = e.name, o = r.split(".").pop().toLowerCase();
-		Li(r);
+		zi(r);
 		let s = (e) => {
 			console.warn(`threefy: cannot load '${r}' —`, e), n.onError?.(e, r);
 		}, c = (e) => (...t) => {
@@ -2949,7 +2962,7 @@ var mi = (e) => {
 						let i = e.target.result, { OBJLoader: a } = Q.loaders, o = new a(t);
 						n && o.setMaterials(n);
 						let s = o.parse(i);
-						Ci.convertPhongToStandard(s), s.name = r, f(s);
+						Ti.convertPhongToStandard(s), s.name = r, f(s);
 					}), !1), l.readAsText(e);
 				}
 				function u(e, r) {
@@ -3020,7 +3033,7 @@ var mi = (e) => {
 			}
 			case "drc": {
 				let { DRACOLoader: t } = Q.loaders, n = new t(o);
-				n.setDecoderPath(Si), n.parse(r, function(t) {
+				n.setDecoderPath(wi), n.parse(r, function(t) {
 					t.center(), u(t);
 					let r;
 					if (t.index !== null) {
@@ -3151,7 +3164,7 @@ var mi = (e) => {
 	}
 	async function a(e, t) {
 		let { unzipSync: r, strFromU8: a } = Q.loaders, o = r(new Uint8Array(e));
-		n.zip = o, Object.keys(o).forEach((e) => Li(e));
+		n.zip = o, Object.keys(o).forEach((e) => zi(e));
 		let s = l();
 		s.setURLModifier((e) => {
 			let t = o[e];
@@ -3167,7 +3180,7 @@ var mi = (e) => {
 		}
 		if (n.bufferMTL && n.bufferOBJ) {
 			let { OBJLoader: e, MTLLoader: r } = Q.loaders, i = new r(s).parse(a(n.bufferMTL)), o = new e(s).setMaterials(i).parse(a(n.bufferOBJ));
-			Ci.convertPhongToStandard(o), o.name = t, f(o);
+			Ti.convertPhongToStandard(o), o.name = t, f(o);
 		}
 		n.bufferOBJ = null, n.bufferMTL = null, n.zip = null;
 	}
@@ -3176,7 +3189,7 @@ var mi = (e) => {
 		if (!t) return null;
 		if (!e.__dracoLoader) {
 			let n = new t();
-			n.setDecoderPath(Si), e.__dracoLoader = n;
+			n.setDecoderPath(wi), e.__dracoLoader = n;
 		}
 		return e.__dracoLoader;
 	}
@@ -3184,7 +3197,7 @@ var mi = (e) => {
 		let { KTX2Loader: t } = Q.loaders;
 		return t ? (e.__ktx2LoaderPromise ||= (async () => {
 			let n = new t();
-			return n.setTranscoderPath(xi), await e.ready, n.detectSupport(e.renderer), e.__ktx2Loader = n;
+			return n.setTranscoderPath(Ci), await e.ready, n.detectSupport(e.renderer), e.__ktx2Loader = n;
 		})(), e.__ktx2LoaderPromise) : null;
 	}
 	async function c(e) {
@@ -3196,13 +3209,13 @@ var mi = (e) => {
 	function l() {
 		let t = () => n.threefy?.dom ?? null, r = new e.LoadingManager();
 		return r.onStart = () => {
-			Ni(t());
+			Fi(t());
 		}, r.onProgress = (e, n, r) => {
-			Fi(n, r, t());
+			Li(n, r, t());
 		}, r.onLoad = () => {
-			Pi(t());
+			Ii(t());
 		}, r.onError = (e) => {
-			Ii("There was an error loading " + e);
+			Ri("There was an error loading " + e);
 		}, r;
 	}
 	function u(e) {
@@ -3225,7 +3238,7 @@ var mi = (e) => {
 		for (let t = 1, n = i.length; t < n; t++) i[t].dispatchEvent({ type: e.name });
 	}
 	this.openFiles = function(e, t, r) {
-		e = e || _i() || document.body, n.onObject = t, n.onError = r, n.__userInitiated = !0, vi(e);
+		e = e || yi() || document.body, n.onObject = t, n.onError = r, n.__userInitiated = !0, bi(e);
 		let i = document.createElement("div");
 		i.style.cssText = "position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 10;", [
 			"click",
@@ -3239,7 +3252,7 @@ var mi = (e) => {
 			"wheel",
 			"contextmenu"
 		].forEach((e) => i.addEventListener(e, (e) => e.stopPropagation()));
-		let a = `threefy-file-input-${++gi}`, o = document.createElement("input");
+		let a = `threefy-file-input-${++vi}`, o = document.createElement("input");
 		o.id = a, o.type = "file", o.multiple = !0, o.style.display = "none", o.addEventListener("change", () => {
 			i.remove(), o.files?.length && n.loadFiles(o.files);
 		}), o.addEventListener("cancel", () => i.remove());
@@ -3250,8 +3263,8 @@ var mi = (e) => {
 			s.style.backgroundColor = "#3276c3";
 		}), s.innerHTML = "\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 17\" style=\"width:1em; height:1em; fill:currentColor; vertical-align: middle; margin-top: -0.25em; margin-right: 0.25em;\">\n                <path d=\"M18.125,15.804l-4.038-4.037c0.675-1.079,1.012-2.308,1.01-3.534C15.089,4.62,12.199,1.75,8.584,1.75C4.815,1.75,1.982,4.726,2,8.286c0.021,3.577,2.908,6.549,6.578,6.549c1.241,0,2.417-0.347,3.44-0.985l4.032,4.026c0.167,0.166,0.43,0.166,0.596,0l1.479-1.478C18.292,16.234,18.292,15.968,18.125,15.804 M8.578,13.99c-3.198,0-5.716-2.593-5.733-5.71c-0.017-3.084,2.438-5.686,5.74-5.686c3.197,0,5.625,2.493,5.64,5.624C14.242,11.548,11.621,13.99,8.578,13.99 M16.349,16.981l-3.637-3.635c0.131-0.11,0.721-0.695,0.876-0.884l3.642,3.639L16.349,16.981z\"></path>\n            </svg>\n            <span>Choose files</span>\n        ", i.appendChild(o), i.appendChild(s), e.append(i), () => i.remove();
 	}, this.dragDropFiles = function(e, t, r) {
-		if (e ||= _i(), n.onObject = t, n.onError = r, n.__userInitiated = !0, !e) return console.warn("ThreeLoader: dragDropFiles() — 붙일 컨테이너가 없다 (캔버스가 아직 없다면 컨테이너를 직접 넘겨라)."), () => {};
-		vi(e), bi(), e.__threefyDropCleanup?.();
+		if (e ||= yi(), n.onObject = t, n.onError = r, n.__userInitiated = !0, !e) return console.warn("ThreeLoader: dragDropFiles() — 붙일 컨테이너가 없다 (캔버스가 아직 없다면 컨테이너를 직접 넘겨라)."), () => {};
+		bi(e), Si(), e.__threefyDropCleanup?.();
 		let i = (t) => {
 			e.classList.toggle("threefy-dragover", t), e.classList.toggle("dragover", t);
 		}, a = (e) => {
@@ -3274,7 +3287,7 @@ Q.loaders = {}, Q.setLoader = (e) => {
 		...e
 	};
 };
-var Ci = { convertPhongToStandard: function(t) {
+var Ti = { convertPhongToStandard: function(t) {
 	let n = /* @__PURE__ */ new Set(), r = /* @__PURE__ */ new Map(), i = (t) => {
 		if (!t || !t.isMeshPhongMaterial) return t;
 		let i = r.get(t.uuid);
@@ -3286,7 +3299,7 @@ var Ci = { convertPhongToStandard: function(t) {
 	t.traverse((e) => {
 		!e.isMesh && !e.isPoints && !e.isLine || (e.material = Array.isArray(e.material) ? e.material.map(i) : i(e.material));
 	});
-} }, wi = {
+} }, Ei = {
 	createFilesMap: function(e) {
 		let t = {};
 		for (let n = 0; n < e.length; n++) {
@@ -3310,7 +3323,7 @@ var Ci = { convertPhongToStandard: function(t) {
 		}
 		for (let t = 0; t < e.length; t++) s(e[t].webkitGetAsEntry());
 	}
-}, Ti = (e) => e.split("/").pop().split("?")[0], Ei = (e) => Ti(e).split(".").pop().toLowerCase(), Di = function(e, t, n, r) {
+}, Di = (e) => e.split("/").pop().split("?")[0], Oi = (e) => Di(e).split(".").pop().toLowerCase(), ki = function(e, t, n, r) {
 	let i;
 	if (t) {
 		function e(e) {
@@ -3322,37 +3335,37 @@ var Ci = { convertPhongToStandard: function(t) {
 		let n = await fetch(e);
 		if (!n.ok) throw Error(`threefy: cannot load '${e}' (HTTP ${n.status} ${n.statusText})`);
 		let r = await n.blob(), a;
-		return e.split(".").pop() === "enc" ? (r = t ? await decryptFile(i, r) : null, a = e.replace(".enc", "")) : a = e, a = Ti(a), r ? new File([r], a) : null;
+		return e.split(".").pop() === "enc" ? (r = t ? await decryptFile(i, r) : null, a = e.replace(".enc", "")) : a = e, a = Di(a), r ? new File([r], a) : null;
 	});
 	Promise.all(a).then((e) => {
 		e = e.filter((e) => e), new Q(r).loadFiles(e);
 	}).catch((e) => {
 		n ? n(e) : console.error(e);
 	});
-}, Oi = function(e, t, n) {
+}, Ai = function(e, t, n) {
 	return new Q(Y()).openFiles(e, t, n);
-}, ki = function(e, t, n) {
+}, ji = function(e, t, n) {
 	return new Q(Y()).dragDropFiles(e, t, n);
-}, Ai = "threefy-spinner", ji = "threefy-spin-keyframes", Mi = (e) => e ?? _i() ?? document.body, Ni = function(e) {
-	let t = Mi(e), n = t.querySelector(`.${Ai}`);
+}, Mi = "threefy-spinner", Ni = "threefy-spin-keyframes", Pi = (e) => e ?? yi() ?? document.body, Fi = function(e) {
+	let t = Pi(e), n = t.querySelector(`.${Mi}`);
 	if (n) {
 		n.style.display = "";
 		return;
 	}
-	if (vi(t), n = document.createElement("div"), n.className = Ai, n.style.cssText = "position: absolute; inset: 0; pointer-events: none; z-index: 11;", n.innerHTML = "\n        <div style=\"position: absolute; left: 45%; top: 45%; width: 10%; vertical-align: middle; text-align: center;\">\n            <p class=\"threefy-spinner-text\" style=\"color: white; font-size: 1.125rem; font-weight: 500;\">Loading...</p>\n            <div style=\"margin-top: 0.5rem\">\n                <svg aria-hidden=\"true\" style=\"display: inline; width: 2.5rem; height: 2.5rem; margin-right: 0.5rem; color: rgb(229 231 235); animation: threefy-spin 1s linear infinite; fill: #2563eb;\" viewBox=\"0 0 100 101\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <path d=\"M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z\" fill=\"currentColor\"/>\n                    <path d=\"M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z\" fill=\"currentFill\"/>\n                </svg>\n            </div>\n        </div>\n    ", t.appendChild(n), !document.getElementById(ji)) {
+	if (bi(t), n = document.createElement("div"), n.className = Mi, n.style.cssText = "position: absolute; inset: 0; pointer-events: none; z-index: 11;", n.innerHTML = "\n        <div style=\"position: absolute; left: 45%; top: 45%; width: 10%; vertical-align: middle; text-align: center;\">\n            <p class=\"threefy-spinner-text\" style=\"color: white; font-size: 1.125rem; font-weight: 500;\">Loading...</p>\n            <div style=\"margin-top: 0.5rem\">\n                <svg aria-hidden=\"true\" style=\"display: inline; width: 2.5rem; height: 2.5rem; margin-right: 0.5rem; color: rgb(229 231 235); animation: threefy-spin 1s linear infinite; fill: #2563eb;\" viewBox=\"0 0 100 101\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n                    <path d=\"M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z\" fill=\"currentColor\"/>\n                    <path d=\"M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z\" fill=\"currentFill\"/>\n                </svg>\n            </div>\n        </div>\n    ", t.appendChild(n), !document.getElementById(Ni)) {
 		let e = document.createElement("style");
-		e.id = ji, e.innerHTML = "\n            @keyframes threefy-spin {\n                from { transform: rotate(0deg); }\n                to { transform: rotate(360deg); }\n            }\n        ", document.head.appendChild(e);
+		e.id = Ni, e.innerHTML = "\n            @keyframes threefy-spin {\n                from { transform: rotate(0deg); }\n                to { transform: rotate(360deg); }\n            }\n        ", document.head.appendChild(e);
 	}
-}, Pi = function(e) {
-	let t = Mi(e).querySelector(`.${Ai}`);
-	t && (t.style.display = "none");
-}, Fi = function(e, t, n) {
-	let r = Mi(n).querySelector(".threefy-spinner-text");
-	r && (r.textContent = t > 0 ? `Loading... ${Math.floor(e / t * 100)}%` : "Loading...");
 }, Ii = function(e) {
+	let t = Pi(e).querySelector(`.${Mi}`);
+	t && (t.style.display = "none");
+}, Li = function(e, t, n) {
+	let r = Pi(n).querySelector(".threefy-spinner-text");
+	r && (r.textContent = t > 0 ? `Loading... ${Math.floor(e / t * 100)}%` : "Loading...");
+}, Ri = function(e) {
 	console.warn(e);
-}, Li = (e) => {
-	switch (Ei(e)) {
+}, zi = (e) => {
+	switch (Oi(e)) {
 		case "3ds":
 			Q.setLoader({ TDSLoader: At });
 			break;
@@ -3421,7 +3434,7 @@ var Ci = { convertPhongToStandard: function(t) {
 			});
 			break;
 	}
-}, Ri = (e, t = "texture") => {
+}, Bi = (e, t = "texture") => {
 	e = Array.isArray(e) ? e : [e];
 	let { threefy: n } = X(), r = t === "audio" ? (e) => {
 		let t = n._cache.get(e);
@@ -3434,16 +3447,16 @@ var Ci = { convertPhongToStandard: function(t) {
 		n.loadTexture(e, t, (t) => r(t instanceof Error ? t : /* @__PURE__ */ Error(`threefy: cannot load '${e}'`))) === void 0 && t(void 0);
 	});
 	return Promise.all(e.map((e) => r(e))).then((e) => e.length === 1 ? e[0] : e);
-}, zi = (e) => Ri(e, "texture"), Bi = (e) => Ri(e, "audio"), Vi = (e) => {
+}, Vi = (e) => Bi(e, "texture"), Hi = (e) => Bi(e, "audio"), Ui = (e) => {
 	e = Array.isArray(e) ? e : [e];
 	let { threefy: t } = X(), n = e.map((e) => t.loadTexture(e));
 	return n.length === 1 ? n[0] : n;
-}, Hi = (e, t) => !!e && e.length === t.length && e.every((e, n) => e === t[n]), Ui = (e) => {
+}, Wi = (e, t) => !!e && e.length === t.length && e.every((e, n) => e === t[n]), Gi = (e) => {
 	let t = gt.clone(e);
 	return t.animations = e.animations ?? [], t.userData.__threefyLoaded = !0, t;
-}, Wi = (t, n, r, i) => {
+}, Ki = (t, n, r, i) => {
 	let a = [], o = [], s = ({ target: e }) => {
-		let n = Ui(t._cache.get(e.name)[0]);
+		let n = Gi(t._cache.get(e.name)[0]);
 		e.removeEventListener(e.name, s);
 		let i = a.indexOf(e);
 		i >= 0 && (a[i] = n);
@@ -3451,33 +3464,33 @@ var Ci = { convertPhongToStandard: function(t) {
 		o && (o.remove(e), o.add(n)), n._listeners = e._listeners, n.applyMatrix4(e.matrix), n.userData.__threefyOnLoadFired = !0, n.dispatchEvent({ type: "onLoad" }), r();
 	};
 	return n.forEach((n) => {
-		Li(n);
-		let r = Ti(n), i = t._cache.get(r);
+		zi(n);
+		let r = Di(n), i = t._cache.get(r);
 		if (i && i[0]) {
-			a.push(Ui(i[0]));
+			a.push(Gi(i[0]));
 			return;
 		}
 		let c = new e.Object3D();
 		c.name = r, i ? i.push(c) : (t._cache.set(r, [null, c]), o.push(n)), c.addEventListener(r, s), a.push(c);
-	}), o.length > 0 && Di(o, void 0, i, t), a;
-}, Gi = (e, t) => t.every((t) => {
-	let n = e._cache.get(Ti(t));
+	}), o.length > 0 && ki(o, void 0, i, t), a;
+}, qi = (e, t) => t.every((t) => {
+	let n = e._cache.get(Di(t));
 	return !!(n && n[0]);
-}), Ki = (e, t) => {
-	if (Gi(e, t)) return null;
+}), Ji = (e, t) => {
+	if (qi(e, t)) return null;
 	let n = t.join("|"), r = e._loadingErrors.get(n);
 	if (r) throw r;
 	let i = e._loadingPromises.get(n);
 	if (i) return i;
 	let a = new Promise((r, i) => {
-		Wi(e, t, () => {
-			Gi(e, t) && (e._loadingPromises.delete(n), r());
+		Ki(e, t, () => {
+			qi(e, t) && (e._loadingPromises.delete(n), r());
 		}, (t) => {
 			e._loadingPromises.delete(n), e._loadingErrors.set(n, t), i(t);
 		});
 	});
 	return a.catch(() => {}), e._loadingPromises.set(n, a), a;
-}, qi = (e) => {
+}, Yi = (e) => {
 	let { threefy: t } = X(), n = (e) => {
 		let n = t._cache.get(e);
 		Array.isArray(n) && n[0] === null && t._cache.delete(e);
@@ -3489,30 +3502,30 @@ var Ci = { convertPhongToStandard: function(t) {
 	}
 	let r = Array.isArray(e) ? e : [e];
 	for (let e of [t._loadingErrors, t._loadingPromises]) for (let t of [...e.keys()]) t.split("|").some((e) => r.includes(e)) && e.delete(t);
-	for (let e of r) n(Ti(e));
-}, Ji = (e) => {
-	let t = Array.isArray(e) ? [...e] : [e], { threefy: n } = X(), r = Ei(t[0]);
-	if (/png|jpg|jpeg|gif|bmp/i.test(r)) return Vi(t);
-	if (/mp3|ogg|wav/i.test(r)) return Bi(t);
-	if (!Br()) {
-		let e = Wi(n, t, () => {});
+	for (let e of r) n(Di(e));
+}, Xi = (e) => {
+	let t = Array.isArray(e) ? [...e] : [e], { threefy: n } = X(), r = Oi(t[0]);
+	if (/png|jpg|jpeg|gif|bmp/i.test(r)) return Ui(t);
+	if (/mp3|ogg|wav/i.test(r)) return Hi(t);
+	if (!Vr()) {
+		let e = Ki(n, t, () => {});
 		return e.length === 1 ? e[0] : e;
 	}
-	let i = _(null), a = Ki(n, t);
+	let i = _(null), a = Ji(n, t);
 	if (a) throw a;
-	(i.current === null || !Hi(i.current.urls, t)) && (i.current = {
+	(i.current === null || !Wi(i.current.urls, t)) && (i.current = {
 		urls: t,
-		results: t.map((e) => Ui(n._cache.get(Ti(e))[0]))
+		results: t.map((e) => Gi(n._cache.get(Di(e))[0]))
 	});
 	let o = i.current.results;
 	return o.length === 1 ? o[0] : o;
-}, Yi = 32, Xi = (e, t) => e === t ? !0 : !Array.isArray(e) || !Array.isArray(t) || e.length !== t.length || e.length > Yi ? !1 : e.every((e, n) => e === t[n]), Zi = (e, t) => !!e && !!t && e.length === t.length && e.every((e, n) => Xi(e, t[n])), Qi = (e, t) => {
+}, Zi = 32, Qi = (e, t) => e === t ? !0 : !Array.isArray(e) || !Array.isArray(t) || e.length !== t.length || e.length > Zi ? !1 : e.every((e, n) => e === t[n]), $i = (e, t) => !!e && !!t && e.length === t.length && e.every((e, n) => Qi(e, t[n])), ea = (e, t) => {
 	let n = _(null);
-	return (n.current === null || !Zi(n.current.keys, t)) && (n.current = {
+	return (n.current === null || !$i(n.current.keys, t)) && (n.current = {
 		keys: t,
 		value: e()
 	}), n.current.value;
-}, $i = (e, t) => {
+}, ta = (e, t) => {
 	let n = _(null);
 	m(() => (n.current = e, () => {
 		n.current === e && (n.current = null), queueMicrotask(() => {
@@ -3526,7 +3539,7 @@ var Ci = { convertPhongToStandard: function(t) {
 	overlaps(e) {
 		return this.x < e.x + e.width && this.x + this.width > e.x && this.y < e.y + e.height && this.y + this.height > e.y;
 	}
-}, ea = class {
+}, na = class {
 	constructor(t, n = 512, r = 512, i = !0, a = 4096) {
 		if (this.MAX_TEXTURE_SIZE = a, !t) return;
 		this.texturesObj = t, this.textureNames = Object.keys(t), this.texWidth = n, this.texHeight = r;
@@ -3640,10 +3653,10 @@ var Ci = { convertPhongToStandard: function(t) {
 		let l = this.makeCanvasPowerOfTwo(i), u = new e.CanvasTexture(l);
 		return u.wrapS = e.ClampToEdgeWrapping, u.wrapT = e.ClampToEdgeWrapping, u.minFilter = e.LinearMipmapLinearFilter, u.magFilter = e.LinearFilter, u.flipY = n, u;
 	}
-}, ta = (e, t, n) => {
+}, ra = (e, t, n) => {
 	let { diffuse: r, opacity: i } = n, { color: a, emissive: o, metalness: s, roughness: c } = n, { ior: l } = n, { clearcoat: u, clearcoatRoughness: d, dispersion: f } = n, { iridescence: p, iridescenceIOR: m, iridescenceThicknessMinimum: h, iridescenceThicknessMaximum: g } = n, { sheenColor: _, sheenRoughness: v, anisotropyVector: y } = n;
 	r ? e.setValue(t, "diffuse", ...r) : e.setValue(t, "diffuse", 1, 1, 1), i !== void 0 && e.setValue(t, "opacity", i), a && e.setValue(t, "diffuse", ...a), o && e.setValue(t, "emissive", ...o), s !== void 0 && e.setValue(t, "metalness", s), c !== void 0 && e.setValue(t, "roughness", c), l !== void 0 && e.setValue(t, "ior", l), u !== void 0 && e.setValue(t, "clearcoat", u), d !== void 0 && e.setValue(t, "clearcoatRoughness", d), f !== void 0 && e.setValue(t, "dispersion", f), p !== void 0 && e.setValue(t, "iridescence", p), m !== void 0 && e.setValue(t, "iridescenceIOR", m), h !== void 0 && e.setValue(t, "iridescenceThicknessMinimum", h), g !== void 0 && e.setValue(t, "iridescenceThicknessMaximum", g), _ && e.setValue(t, "sheenColor", ..._), v !== void 0 && e.setValue(t, "sheenRoughness", v), y && e.setValue(t, "anisotropyVector", ...y);
-}, na = (t, n = 512, r = 512, i = 6553600, a = 6553600 * 2, o = null) => {
+}, ia = (t, n = 512, r = 512, i = 6553600, a = 6553600 * 2, o = null) => {
 	if (!t || t.length === 0) return;
 	let s = !0, c = (t, n, r, i = "white") => {
 		let a = t[`${n}-${r}-${i}`];
@@ -3702,7 +3715,7 @@ var Ci = { convertPhongToStandard: function(t) {
 				s ? u[e][o] = l(d, s, n, r, i) : u[e][o] = c(f, n, r, i);
 			});
 		});
-		let i = u.map ? "map" : v.find((e) => !!u[e]), a = new ea(u[i], n, r, s, _);
+		let i = u.map ? "map" : v.find((e) => !!u[e]), a = new na(u[i], n, r, s, _);
 		m = a.ranges, p[i] = a.mergedTexture, v.forEach((t) => {
 			t !== i && (p[t] = a.toSameLayout(u[t], s)), t === "map" || t === "emissiveMap" || t === "specularColorMap" ? p[t].colorSpace = e.SRGBColorSpace : t === "envMap" || t === "lightMap" ? p[t].colorSpace = e.LinearSRGBColorSpace : p[t].colorSpace = e.NoColorSpace;
 		});
@@ -3730,10 +3743,10 @@ var Ci = { convertPhongToStandard: function(t) {
 		}
 		n.updateWorldMatrix(!0, !1);
 		let a = n.matrixWorld;
-		n.isSkinnedMesh && (a = ee.multiplyMatrices(n.bindMatrixInverse, a)), S.setMatrixAt(r, a), ta(x, r, y[e]);
+		n.isSkinnedMesh && (a = ee.multiplyMatrices(n.bindMatrixInverse, a)), S.setMatrixAt(r, a), ra(x, r, y[e]);
 	}
 	return S;
-}, ra = (e, t = 512, n = 512, r = 6553600, i = 6553600 * 2, a = null) => new Promise((o) => {
+}, aa = (e, t = 512, n = 512, r = 6553600, i = 6553600 * 2, a = null) => new Promise((o) => {
 	let s = [];
 	if (e.forEach((e) => {
 		let t = Array.isArray(e.material) ? e.material[0] : e.material;
@@ -3743,11 +3756,11 @@ var Ci = { convertPhongToStandard: function(t) {
 		});
 	}), s.length > 0) {
 		let c = Date.now(), l = () => {
-			s.every((e) => e.image && e.image.width) || Date.now() - c > 1e4 ? o(na(e, t, n, r, i, a)) : setTimeout(l, 100);
+			s.every((e) => e.image && e.image.width) || Date.now() - c > 1e4 ? o(ia(e, t, n, r, i, a)) : setTimeout(l, 100);
 		};
 		l();
-	} else o(na(e, t, n, r, i, a));
-}), ia = (t) => {
+	} else o(ia(e, t, n, r, i, a));
+}), oa = (t) => {
 	let n = [], r = [];
 	if (t.forEach((t) => {
 		if (/geometry/i.test(t.type)) {
@@ -3760,9 +3773,9 @@ var Ci = { convertPhongToStandard: function(t) {
 	}), n.length === 0) return null;
 	let i = n.length === 1 ? n[0] : Lt.mergeGeometries(n, !1);
 	return n.length > 1 && r.push(i), i.userData.__threefyOwnedGeometries = r, i;
-}, aa = (e) => {
+}, sa = (e) => {
 	e?.userData?.__threefyOwnedGeometries?.forEach((e) => e.dispose());
-}, oa = (e) => {
+}, ca = (e) => {
 	let t = _(null), { ref: n = t, children: r, ...i } = e, a = o.Children.toArray(r), s = a.filter((e) => /geometry/i.test(e?.type) || /primitive/.test(e?.type) && e?.props?.object?.isBufferGeometry), c = [];
 	s.forEach((e) => {
 		c.push(e.type);
@@ -3771,8 +3784,8 @@ var Ci = { convertPhongToStandard: function(t) {
 			e !== "children" && c.push(e, t[e]);
 		});
 	});
-	let l = Qi(() => ia(s), c);
-	$i(l, aa);
+	let l = ea(() => oa(s), c);
+	ta(l, sa);
 	let u;
 	return a.forEach((e) => {
 		if (!/geometry/i.test(e?.type)) {
@@ -3790,7 +3803,7 @@ var Ci = { convertPhongToStandard: function(t) {
 			attach: "geometry"
 		}), u]
 	}) : null;
-}, sa = (e) => {
+}, la = (e) => {
 	let t = _(null), { ref: n = t, children: r, texW: i = 512, texH: a = 512, maxVertexCount: s = 6553600, maxIndexCount: c = 6553600 * 2, ...l } = e, u = _(null), d = X().threefy, f = _(null), p = _(!1), h = _(!0);
 	return m(() => (h.current = !0, () => {
 		h.current = !1;
@@ -3799,13 +3812,13 @@ var Ci = { convertPhongToStandard: function(t) {
 	}), []), m(() => {
 		if (p.current) return;
 		let e = u.current;
-		!e || o.Children.count(r) === 0 || (p.current = !0, Er(n, e), e.visible = !1, ra(e.children, i, a, s, c, d).then((t) => {
+		!e || o.Children.count(r) === 0 || (p.current = !0, Dr(n, e), e.visible = !1, aa(e.children, i, a, s, c, d).then((t) => {
 			if (h.current) {
 				if (!t || !e.parent) {
 					e.visible = !0, p.current = !1;
 					return;
 				}
-				e.parent.add(t), f.current = t, Er(n, t);
+				e.parent.add(t), f.current = t, Dr(n, t);
 			}
 		}));
 	}, [r]), o.Children.count(r) > 0 ? /* @__PURE__ */ F("batchedMesh", {
@@ -3813,7 +3826,7 @@ var Ci = { convertPhongToStandard: function(t) {
 		...l,
 		children: r
 	}) : null;
-}, ca = class extends e.Sprite {
+}, ua = class extends e.Sprite {
 	constructor(e = "", t = {}) {
 		let { textHeight: n = .5, textWidthScale: r = 1, textColor: i = "#ffffff", textAlign: a = "center", textBaseline: o = "middle", fontStyle: s = "normal", fontVariant: c = "normal", fontWeight: l = "normal", fontSize: u = "64px", fontFamily: d = "Karla, sans-serif" } = t, f = {
 			string: e,
@@ -3852,11 +3865,11 @@ var Ci = { convertPhongToStandard: function(t) {
 		let s = n.height * n.string.length * n.widthScale;
 		return this.scale.set(s, n.height, 1), a;
 	}
-}, la = (e, t) => {
+}, da = (e, t) => {
 	let n = e?.material?.map;
 	n && (t ? t.disposeTexture(n) : n.dispose()), e?.material?.dispose();
-}, ua = (e) => {
-	let t = _(null), { ref: n = t, string: r = "", height: i = .5, widthScale: a = 1, color: o = 16777215, align: s = "center", baseline: c = "middle", style: l = "normal", variant: u = "normal", weight: d = "normal", size: f = "64px", family: p = "Karla, sans-serif", ...m } = e, h = Qi(() => new ca(r, {
+}, fa = (e) => {
+	let t = _(null), { ref: n = t, string: r = "", height: i = .5, widthScale: a = 1, color: o = 16777215, align: s = "center", baseline: c = "middle", style: l = "normal", variant: u = "normal", weight: d = "normal", size: f = "64px", family: p = "Karla, sans-serif", ...m } = e, h = ea(() => new ua(r, {
 		textHeight: i,
 		textWidthScale: a,
 		textColor: o,
@@ -3880,12 +3893,12 @@ var Ci = { convertPhongToStandard: function(t) {
 		f,
 		p
 	]), g = Y();
-	return $i(h, (e) => la(e, g)), /* @__PURE__ */ F("primitive", {
+	return ta(h, (e) => da(e, g)), /* @__PURE__ */ F("primitive", {
 		ref: n,
 		object: h,
 		...m
 	});
-}, da = (e, t, n) => {
+}, pa = (e, t, n) => {
 	let r = new Float32Array(t * n);
 	if (n === 3 && e.length && e[0] && (e[0].isVector3 || e[0].isColor)) for (let n = 0; n < t; n++) {
 		let t = e[n];
@@ -3893,23 +3906,23 @@ var Ci = { convertPhongToStandard: function(t) {
 	}
 	else r.set(e.subarray ? e.subarray(0, r.length) : e.slice(0, r.length));
 	return r;
-}, fa = (e) => e[0] && e[0].isVector3 ? e.length : Math.floor(e.length / 3), pa = new e.Matrix4(), ma = new e.Ray(), ha = new e.Box3(), ga = new e.Sphere(), _a = new e.Vector3(), va = new e.Vector3(), ya = new e.Vector3(), ba = new e.Vector3(), xa = class extends e.Sprite {
+}, ma = (e) => e[0] && e[0].isVector3 ? e.length : Math.floor(e.length / 3), ha = new e.Matrix4(), ga = new e.Ray(), _a = new e.Box3(), va = new e.Sphere(), ya = new e.Vector3(), ba = new e.Vector3(), xa = new e.Vector3(), Sa = new e.Vector3(), Ca = class extends e.Sprite {
 	constructor(t = [], n = {}) {
 		let { colors: r, sizes: i, rotations: a, ...o } = n, s = new e.PointsNodeMaterial();
 		super(s), this.isPointsSprite = !0, this.type = "PointsSprite", this.frustumCulled = !1, K(s, o);
-		let c = fa(t);
+		let c = ma(t);
 		this.count = c;
-		let l = new e.InstancedBufferAttribute(da(t, c, 3), 3);
+		let l = new e.InstancedBufferAttribute(pa(t, c, 3), 3);
 		if (s.positionNode = T(l), this.userData.instancePosition = l, r) {
-			let t = new e.InstancedBufferAttribute(da(r, c, 3), 3), n = T(t);
+			let t = new e.InstancedBufferAttribute(pa(r, c, 3), 3), n = T(t);
 			s.colorNode = s.map ? xe(s.map, Ce()).mul(n) : n, this.userData.instanceColor = t;
 		}
 		if (i) {
-			let t = new e.InstancedBufferAttribute(da(i, c, 1), 1);
+			let t = new e.InstancedBufferAttribute(pa(i, c, 1), 1);
 			s.sizeNode = T(t), this.userData.instanceSize = t;
 		}
 		if (a) {
-			let t = new e.InstancedBufferAttribute(da(a, c, 1), 1);
+			let t = new e.InstancedBufferAttribute(pa(a, c, 1), 1);
 			s.rotationNode = T(t), this.userData.instanceRotation = t;
 		}
 		this.pickThreshold = null, this._pointsBounds = null, this._pointsBoundsKey = -1;
@@ -3918,15 +3931,15 @@ var Ci = { convertPhongToStandard: function(t) {
 		let r = t.version + (n ? n.version * 1e6 : 0);
 		if (this._pointsBounds && this._pointsBoundsKey === r) return this._pointsBounds;
 		let i = this.count;
-		ha.makeEmpty();
-		for (let e = 0; e < i; e++) ha.expandByPoint(va.fromBufferAttribute(t, e));
+		_a.makeEmpty();
+		for (let e = 0; e < i; e++) _a.expandByPoint(ba.fromBufferAttribute(t, e));
 		let a = 1;
 		if (n) {
 			a = 0;
 			for (let e = 0; e < i; e++) a = Math.max(a, n.getX(e));
 		}
 		return this._pointsBounds = {
-			sphere: ha.getBoundingSphere(new e.Sphere()),
+			sphere: _a.getBoundingSphere(new e.Sphere()),
 			maxSize: a
 		}, this._pointsBoundsKey = r, this._pointsBounds;
 	}
@@ -3934,33 +3947,33 @@ var Ci = { convertPhongToStandard: function(t) {
 		let r = this.userData.instancePosition, i = this.count;
 		if (!r || !i) return;
 		let a = this.userData.instanceSize, o = this._updatePointsBounds(r, a), s = t.camera, c = s && s.isPerspectiveCamera ? Math.tan(e.MathUtils.DEG2RAD * .5 * s.fov) / s.zoom : 1, l = this.material.size === void 0 ? 1 : this.material.size, u = this.pickThreshold !== null && this.pickThreshold !== void 0 ? this.pickThreshold : t.params.Points && t.params.Points.threshold || 0, d = this.matrixWorld;
-		_a.setFromMatrixScale(d);
-		let f = (Math.abs(_a.x) + Math.abs(_a.y) + Math.abs(_a.z)) / 3 || 1, p = (e) => (.5 * e * c + u) / f;
-		if (pa.copy(d).invert(), ma.copy(t.ray).applyMatrix4(pa), ga.copy(o.sphere), ga.radius += p(a ? o.maxSize : l), ma.intersectsSphere(ga) === !1) return;
-		let m = ma.origin, h = ma.direction, g = !!(s && s.isPerspectiveCamera), _ = Infinity, v = -1, y = 0, b = 0;
+		ya.setFromMatrixScale(d);
+		let f = (Math.abs(ya.x) + Math.abs(ya.y) + Math.abs(ya.z)) / 3 || 1, p = (e) => (.5 * e * c + u) / f;
+		if (ha.copy(d).invert(), ga.copy(t.ray).applyMatrix4(ha), va.copy(o.sphere), va.radius += p(a ? o.maxSize : l), ga.intersectsSphere(va) === !1) return;
+		let m = ga.origin, h = ga.direction, g = !!(s && s.isPerspectiveCamera), _ = Infinity, v = -1, y = 0, b = 0;
 		for (let e = 0; e < i; e++) {
-			va.fromBufferAttribute(r, e), ya.subVectors(va, m);
-			let t = ya.dot(h);
+			ba.fromBufferAttribute(r, e), xa.subVectors(ba, m);
+			let t = xa.dot(h);
 			if (t <= 0) continue;
-			let n = p(a ? a.getX(e) : l), i = Math.max(ya.lengthSq() - t * t, 0);
+			let n = p(a ? a.getX(e) : l), i = Math.max(xa.lengthSq() - t * t, 0);
 			if (i > n * n) continue;
 			let o = g ? i / (t * t) : i;
 			o >= _ || (_ = o, v = e, y = t, b = i);
 		}
 		if (v < 0) return;
-		ba.copy(m).addScaledVector(h, y).applyMatrix4(d);
-		let x = t.ray.origin.distanceTo(ba);
+		Sa.copy(m).addScaledVector(h, y).applyMatrix4(d);
+		let x = t.ray.origin.distanceTo(Sa);
 		x < t.near || x > t.far || n.push({
 			distance: x,
 			distanceToRay: Math.sqrt(b) * f,
-			point: ba.clone(),
+			point: Sa.clone(),
 			index: v,
 			instanceId: v,
 			face: null,
 			object: this
 		});
 	}
-}, Sa = (e) => {
+}, wa = (e) => {
 	let t = _(null), { ref: n = t, positions: r = [], colors: i, sizes: a, rotations: o, type: s, ...c } = e, l = [
 		r,
 		i,
@@ -3970,18 +3983,18 @@ var Ci = { convertPhongToStandard: function(t) {
 	Object.keys(c).sort().forEach((e) => {
 		l.push(e, c[e]);
 	});
-	let u = Qi(() => new xa(r, {
+	let u = ea(() => new Ca(r, {
 		colors: i,
 		sizes: a,
 		rotations: o,
 		...c
 	}), l), d = Y();
-	return $i(u, (e) => la(e, d)), /* @__PURE__ */ F("primitive", {
+	return ta(u, (e) => da(e, d)), /* @__PURE__ */ F("primitive", {
 		ref: n,
 		object: u,
 		...c
 	});
-}, Ca = /*@__PURE__*/ new e.Matrix4(), wa = /*@__PURE__*/ new e.Matrix4(), Ta = /*@__PURE__*/ new e.Matrix4(), Ea = /*@__PURE__*/ new e.Matrix4(), Da = [], Oa = /*@__PURE__*/ new e.Box3(), ka = /*@__PURE__*/ new e.Sphere(), Aa = /*@__PURE__*/ b(([e], t) => {
+}, Ta = /*@__PURE__*/ new e.Matrix4(), Ea = /*@__PURE__*/ new e.Matrix4(), Da = /*@__PURE__*/ new e.Matrix4(), Oa = /*@__PURE__*/ new e.Matrix4(), ka = [], Aa = /*@__PURE__*/ new e.Box3(), ja = /*@__PURE__*/ new e.Sphere(), Ma = /*@__PURE__*/ b(([e], t) => {
 	let n = e.skeleton.boneTexture, r = ee("skinIndex", "uvec4"), i = ee("skinWeight", "vec4"), a = he("bindMatrix", "mat4"), o = he("bindMatrixInverse", "mat4"), s = (e) => {
 		let t = E(e).mul(4);
 		return oe(k(n, D(t, w)), k(n, D(t.add(1), w)), k(n, D(t.add(2), w)), k(n, D(t.add(3), w)));
@@ -3991,7 +4004,7 @@ var Ci = { convertPhongToStandard: function(t) {
 		e = o.mul(e).mul(a), ce.assign(e.transformDirection(ce).xyz), t.hasGeometryAttribute("tangent") && be.assign(e.transformDirection(be).xyz);
 	}
 }, "void");
-function ja(e) {
+function Na(e) {
 	let t = e.skeleton;
 	if (!t.boneTexture) {
 		if (e.instanceBones === null) {
@@ -4001,13 +4014,13 @@ function ja(e) {
 		t.computeInstancedBoneTexture();
 	}
 }
-function Ma(e) {
+function Pa(e) {
 	!e || e.__instancedSkinning === !0 || (e.__instancedSkinning = !0, e.setupPosition = function(e) {
 		let t = e.object;
-		return t.isInstancedSkinnedMesh === !0 && t.skeleton && (ja(t), Aa(t)), Object.getPrototypeOf(this).setupPosition.call(this, e);
+		return t.isInstancedSkinnedMesh === !0 && t.skeleton && (Na(t), Ma(t)), Object.getPrototypeOf(this).setupPosition.call(this, e);
 	});
 }
-var Na = class extends e.SkinnedMesh {
+var Fa = class extends e.SkinnedMesh {
 	constructor(t, n, r = 1) {
 		super(t, n), this.isInstancedMesh = !0, this.isInstancedSkinnedMesh = !0, this.isSkinnedMesh = !1, this.instanceMatrix = new e.InstancedBufferAttribute(new Float32Array(r * 16), 16), this.instanceColor = null, this.instanceBones = null, this.morphTexture = null, this.count = r, this.boundingBox = null, this.boundingSphere = null, this._mesh = null;
 		let i = this.bind.bind(this);
@@ -4015,27 +4028,27 @@ var Na = class extends e.SkinnedMesh {
 			i(t, n), this.skeleton.update = (e, t) => {
 				let n = this.skeleton.bones, r = this.skeleton.boneInverses, i = e || this.skeleton.boneMatrices, a = this.skeleton.boneTexture, o = t || 0;
 				for (let e = 0, t = n.length; e < t; e++) {
-					let t = n[e] ? n[e].matrixWorld : Ea;
-					Ta.multiplyMatrices(t, r[e]), Ta.toArray(i, 16 * (e + o * n.length));
+					let t = n[e] ? n[e].matrixWorld : Oa;
+					Da.multiplyMatrices(t, r[e]), Da.toArray(i, 16 * (e + o * n.length));
 				}
 				a !== null && (a.needsUpdate = !0);
 			}, this.skeleton.computeBoneTexture = this.skeleton.computeInstancedBoneTexture = () => {
 				this.skeleton.boneTexture = new e.DataTexture(this.instanceBones, this.skeleton.bones.length * 4, this.count, e.RGBAFormat, e.FloatType), this.skeleton.boneTexture.needsUpdate = !0;
 			};
-		}, Array.isArray(this.material) ? this.material.forEach(Ma) : Ma(this.material);
+		}, Array.isArray(this.material) ? this.material.forEach(Pa) : Pa(this.material);
 	}
 	computeBoundingBox() {
 		let t = this.geometry, n = this.count;
 		this.boundingBox === null && (this.boundingBox = new e.Box3()), t.boundingBox === null && t.computeBoundingBox(), this.boundingBox.makeEmpty();
-		for (let e = 0; e < n; e++) this.getMatrixAt(e, Ca), Oa.copy(t.boundingBox).applyMatrix4(Ca), this.boundingBox.union(Oa);
+		for (let e = 0; e < n; e++) this.getMatrixAt(e, Ta), Aa.copy(t.boundingBox).applyMatrix4(Ta), this.boundingBox.union(Aa);
 	}
 	computeBoundingSphere() {
 		let t = this.geometry, n = this.count;
 		this.boundingSphere === null && (this.boundingSphere = new e.Sphere()), t.boundingSphere === null && t.computeBoundingSphere(), this.boundingSphere.makeEmpty();
-		for (let e = 0; e < n; e++) this.getMatrixAt(e, Ca), ka.copy(t.boundingSphere).applyMatrix4(Ca), this.boundingSphere.union(ka);
+		for (let e = 0; e < n; e++) this.getMatrixAt(e, Ta), ja.copy(t.boundingSphere).applyMatrix4(Ta), this.boundingSphere.union(ja);
 	}
 	copy(e, t) {
-		return super.copy(e, t), this.isSkinnedMesh = !1, e.isInstancedMesh && (e.instanceMatrix && (this.instanceMatrix = e.instanceMatrix.clone()), e.instanceColor && (this.instanceColor = e.instanceColor.clone()), e.morphTexture && (this.morphTexture = e.morphTexture.clone()), this.count = e.count), Array.isArray(this.material) ? this.material.forEach(Ma) : Ma(this.material), this;
+		return super.copy(e, t), this.isSkinnedMesh = !1, e.isInstancedMesh && (e.instanceMatrix && (this.instanceMatrix = e.instanceMatrix.clone()), e.instanceColor && (this.instanceColor = e.instanceColor.clone()), e.morphTexture && (this.morphTexture = e.morphTexture.clone()), this.count = e.count), Array.isArray(this.material) ? this.material.forEach(Pa) : Pa(this.material), this;
 	}
 	getColorAt(e, t) {
 		if (this.instanceColor === null) return t.setRGB(1, 1, 1);
@@ -4052,13 +4065,13 @@ var Na = class extends e.SkinnedMesh {
 		let r = this.matrixWorld, i = this.count;
 		this._mesh === null && (this._mesh = new e.SkinnedMesh(this.geometry, this.material), this._mesh.copy(this));
 		let a = this._mesh;
-		if (a.material !== void 0 && (this.boundingSphere === null && this.computeBoundingSphere(), ka.copy(this.boundingSphere), ka.applyMatrix4(r), t.ray.intersectsSphere(ka) !== !1)) for (let e = 0; e < i; e++) {
-			this.getMatrixAt(e, Ca), wa.multiplyMatrices(r, Ca), a.matrixWorld = wa, a.raycast(t, Da);
-			for (let t = 0, r = Da.length; t < r; t++) {
-				let r = Da[t];
+		if (a.material !== void 0 && (this.boundingSphere === null && this.computeBoundingSphere(), ja.copy(this.boundingSphere), ja.applyMatrix4(r), t.ray.intersectsSphere(ja) !== !1)) for (let e = 0; e < i; e++) {
+			this.getMatrixAt(e, Ta), Ea.multiplyMatrices(r, Ta), a.matrixWorld = Ea, a.raycast(t, ka);
+			for (let t = 0, r = ka.length; t < r; t++) {
+				let r = ka[t];
 				r.instanceId = e, r.object = this, n.push(r);
 			}
-			Da.length = 0;
+			ka.length = 0;
 		}
 	}
 	setColorAt(t, n) {
@@ -4086,4 +4099,4 @@ var Na = class extends e.SkinnedMesh {
 	}
 };
 //#endregion
-export { An as AnaglyphEffect, Ht as Animator, Pn as AsciiEffect, sn as BatchedMaterial, Cn as BokehPass, pi as ColladaExporter, En as DotScreenPass, On as FXAAPass, xn as GTAOPass, Tn as GlitchPass, pn as InstancedObject, Na as InstancedSkinnedMesh, Kn as MATERIAL_TYPES, fi as MTLExporter, cn as MergedMaterial, sa as MergedMesh, oa as Mesh, Nn as OutlineEffect, Sn as OutlinePass, yn as OutputPass, jn as ParallaxBarrierEffect, Sa as Points, xa as PointsSprite, Dn as RGBShiftPass, vn as RenderPass, wn as ShaderPass, Mn as StereoEffect, z as TEXTURE_MAPS, ua as Text, ca as TextSprite, Mr as ThreeCanvas, Jt as Threefy, Ut as ThreefyPipeline, bn as UnrealBloomPass, ki as dragDropFiles, X as getThree, Y as getThreefy, Br as inRender, Bi as loadAudios, zi as loadTextures, ra as mergeMeshes, Oi as openFiles, N as reactElements, qi as retryLoad, K as setObject3D, Er as setUserRef, In as toColor, Rn as toVector2s, Ln as toVector3, R as toVector3s, zn as toVector4s, Xr as useAnimate, hi as useExporter, Gr as useFrame, Vr as useHandle, Kr as useKeyDown, qr as useKeyUp, Ji as useLoader, Hr as useRefCallback, Lr as useRefEffect, Yr as useSearch, Jr as useSearchObject, Pr as useSetup, Nr as useThree };
+export { An as AnaglyphEffect, Ht as Animator, Pn as AsciiEffect, sn as BatchedMaterial, Cn as BokehPass, hi as ColladaExporter, En as DotScreenPass, On as FXAAPass, xn as GTAOPass, Tn as GlitchPass, pn as InstancedObject, Fa as InstancedSkinnedMesh, Kn as MATERIAL_TYPES, mi as MTLExporter, cn as MergedMaterial, la as MergedMesh, ca as Mesh, Nn as OutlineEffect, Sn as OutlinePass, yn as OutputPass, jn as ParallaxBarrierEffect, wa as Points, Ca as PointsSprite, Dn as RGBShiftPass, vn as RenderPass, wn as ShaderPass, Mn as StereoEffect, z as TEXTURE_MAPS, fa as Text, ua as TextSprite, Nr as ThreeCanvas, Jt as Threefy, Ut as ThreefyPipeline, bn as UnrealBloomPass, ji as dragDropFiles, X as getThree, Y as getThreefy, Vr as inRender, Hi as loadAudios, Vi as loadTextures, aa as mergeMeshes, Ai as openFiles, N as reactElements, Yi as retryLoad, K as setObject3D, Dr as setUserRef, In as toColor, Rn as toVector2s, Ln as toVector3, R as toVector3s, zn as toVector4s, Zr as useAnimate, _i as useExporter, Kr as useFrame, Hr as useHandle, qr as useKeyDown, Jr as useKeyUp, Xi as useLoader, Ur as useRefCallback, Rr as useRefEffect, Xr as useSearch, Yr as useSearchObject, Fr as useSetup, Pr as useThree };
