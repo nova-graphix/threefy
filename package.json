@@ -1,6 +1,6 @@
 {
   "name": "threefy",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A javascript 3D library that integrates React and three.js",
   "type": "module",
   "files": [
@@ -17,7 +17,9 @@
     "type": "git",
     "url": "git+https://github.com/nova-graphix/threefy.git"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/threefy.js"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
